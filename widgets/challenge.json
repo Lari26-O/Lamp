@@ -1,0 +1,11 @@
+{
+  "type": "AdaptiveCard",
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.5",
+  "body": [
+    { "type": "TextBlock", "text": "${challengeLabel}", "weight": "Bolder", "color": "Accent", "size": "Small" },
+    { "type": "TextBlock", "text": "${challenge}", "wrap": true, "size": "Medium" },
+    { "type": "TextBlock", "text": "Streak: ${streak}", "isSubtle": true, "size": "Small", "spacing": "Medium" }
+  ],
+  "actions": [{ "type": "Action.Execute", "title": "${open}", "verb": "open" }]
+}

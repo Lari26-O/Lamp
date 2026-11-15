@@ -1,0 +1,12 @@
+{
+  "type": "AdaptiveCard",
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.5",
+  "body": [
+    { "type": "TextBlock", "text": "${planLabel}", "weight": "Bolder", "color": "Accent", "size": "Small" },
+    { "type": "TextBlock", "text": "${plan}", "wrap": true },
+    { "type": "TextBlock", "text": "“${verse}”", "wrap": true, "isSubtle": true, "spacing": "Medium", "maxLines": 4 },
+    { "type": "TextBlock", "text": "${verseRef}", "size": "Small", "isSubtle": true }
+  ],
+  "actions": [{ "type": "Action.Execute", "title": "${open}", "verb": "open" }]
+}
