@@ -15,14 +15,24 @@ const COLOR_FROM = {
 };
 const has = f => READY.has(f);
 // v2 pictures are named <id>-p<n>.webp (8 per story); earlier ones <id>-<n>.webp (6 per story).
-const v2 = id => Array.from({ length: 8 }, (_, i) => `${id}-p${i + 1}.webp`).every(has);
-export const painted = (id, pages = 6) => v2(id) || Array.from({ length: pages }, (_, i) => `${id}-${i + 1}.webp`).every(has);
 // Which earlier (6-page) picture best fits each new page, until the 8-page pictures exist.
 const OLD_MAP = {
   christmas: [1, 1, 1, 2, 3, 4, 5, 6], friends: [2, 1, 3, 4, 4, 5, 5, 6], feeding: [1, 2, 3, 4, 4, 5, 6, 6],
   children: [1, 1, 2, 3, 4, 5, 5, 6], samaritan: [1, 1, 2, 3, 4, 5, 5, 6], blind: [2, 1, 2, 3, 4, 3, 5, 6],
 };
-const pageFile = (id, n) => has(`${id}-p${n}.webp`) ? `${id}-p${n}.webp` : `${id}-${OLD_MAP[id]?.[n - 1] || Math.min(6, Math.max(1, Math.round(n * 6 / 8)))}.webp`;
+function pageFile(id, n) {
+  if (has(`${id}-p${n}.webp`)) return `${id}-p${n}.webp`;
+  const old = `${id}-${OLD_MAP[id]?.[n - 1] || Math.min(6, Math.max(1, Math.round(n * 6 / 8)))}.webp`;
+  if (has(old)) return old;
+  for (let d = 1; d < 8; d++) for (const m of [n - d, n + d]) if (m >= 1 && m <= 8 && has(`${id}-p${m}.webp`)) return `${id}-p${m}.webp`;
+  return null;
+}
+// A story counts as painted when every one of its 8 pages has a picture (its own or a close one).
+const ownPages = id => Array.from({ length: 8 }, (_, i) => i + 1).filter(n => has(`${id}-p${n}.webp`) || has(`${id}-${OLD_MAP[id]?.[n - 1] || Math.min(6, Math.max(1, Math.round(n * 6 / 8)))}.webp`)).length;
+export const painted = id => ownPages(id) >= 6 && Array.from({ length: 8 }, (_, i) => pageFile(id, i + 1)).every(Boolean);
+const COVER = { christmas: 6, friends: 6, storm: 6, feeding: 4, children: 8, samaritan: 7, blind: 8, zacchaeus: 4, sheep: 7, love: 5, easter: 8, always: 6,
+  creation: 6, noah: 4, abraham: 6, joseph: 1, babymoses: 5, redsea: 7, jericho: 8, ruth: 4, samuel: 4, david: 6, jonah: 5, daniel: 8, esther: 6 };
+export const cover = id => painted(id) ? (COVER[id] || 3) : 3;
 export const hasArt = id => painted(id) || FLAT_SCENES.includes(id);
 export const sceneSrc = (id, n = 1) => BASE + pageFile(id, n);
 export const colorSrc = id => has(`color/${id}.png`) ? `${BASE}color/${id}.png` : flatColorSrc(id);

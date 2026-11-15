@@ -12,8 +12,8 @@ const DAVID = 'David (a shepherd boy with curly red-brown hair in a light blue t
 export const SCENES = {
   christmas: [
     `${MARY} in the small village of Nazareth, sweeping outside a little stone house, ${JOSEPH} the carpenter working with wood nearby`,
-    `the shining angel Gabriel with white wings appearing to ${MARY} inside her home, she is surprised, golden light`,
-    `${JOSEPH} sleeping on a mat at night while a glowing angel speaks to him in a dream`,
+    `two characters inside a small stone home: on the left a tall glowing angel man named Gabriel with big white wings and a white robe; on the right ${MARY} without wings, kneeling and surprised, golden light`,
+    `${JOSEPH} resting peacefully on a mat in a cozy moonlit room, a small friendly angel glowing softly above him, calm and gentle night scene`,
     `${MARY} riding a little gray donkey led by ${JOSEPH} on a long dusty road over hills toward Bethlehem at sunset`,
     `${MARY} and ${JOSEPH} at the door of a crowded inn in Bethlehem at night, the innkeeper shaking his head, busy street with travelers`,
     `baby Jesus wrapped in cloth sleeping in a hay manger, ${MARY} and ${JOSEPH} smiling, a cow and donkey, warm lantern light in a stable`,

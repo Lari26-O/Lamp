@@ -5,7 +5,7 @@ import { $, $$, esc, icon, shuffle, speech } from '../util.js';
 import { load, save, markActivity, getSettings } from '../store.js';
 import { getProfile, isPreReader, L } from '../profile.js';
 import { STORIES, PIC_WORDS, JESUS_ORDER } from '../kids-data.js';
-import { scene, pic, PIC_IDS, colorSrc, realSrc } from '../kids-art.js';
+import { scene, pic, PIC_IDS, colorSrc, realSrc, cover } from '../kids-art.js';
 import { todayChallenge, challengeText, isDone, completeChallenge } from '../challenges.js';
 import { t, LANG } from '../i18n.js';
 import { kidsStreak } from '../streaks.js';
@@ -59,12 +59,12 @@ function home(el) {
     <section class="kid-hero" style="--kc:${next.color}">
       <div class="kid-hero-text"><h1>${esc(hello)} ${hear(hello + ' ' + t('kids.welcome', 'Let’s learn about Jesus!'))}</h1><p>${t('kids.welcome', 'Let’s learn about Jesus!')}</p>
         <a class="kid-btn big" href="#/kids/story/${next.id}">${icon('play')} ${esc(L(next.title))}</a></div>
-      <div class="kid-hero-art">${scene(next.scene, 3, { eager: true })}</div>
+      <div class="kid-hero-art">${scene(next.scene, cover(next.scene), { eager: true })}</div>
     </section>
     <a class="kid-card challenge ${done ? 'done' : ''}" href="#/kids/today"><span class="kid-ico">${icon(done ? 'check' : 'star')}</span><div><b>${t('kids.todayChallenge', 'Today’s challenge')}</b><p>${esc(challengeText(ch))}</p></div>${hear(challengeText(ch))}</a>
     ${ks.html.replace('</b><ol', '</b> ' + hear(ks.text) + '<ol')}
     ${[['nt', t('kids.stories', 'Stories about Jesus')], ['ot', t('kids.otStories', 'Old Testament stories')]].map(([part, label]) => `<h2 class="kid-title">${label} ${hear(label)}</h2>
-    <div class="kid-grid">${STORIES.filter(s => s.part === part).map((s, i) => `<a class="kid-story ${st.stories[s.id] ? 'done' : ''}" href="#/kids/story/${s.id}" style="--kc:${s.color}"><span class="kid-thumb">${scene(s.scene, 3)}</span><b><span class="n">${i + 1}</span>${esc(L(s.title))}</b>${st.stories[s.id] ? `<span class="kid-done">${icon('check')}</span>` : ''}</a>`).join('')}</div>`).join('')}
+    <div class="kid-grid">${STORIES.filter(s => s.part === part).map((s, i) => `<a class="kid-story ${st.stories[s.id] ? 'done' : ''}" href="#/kids/story/${s.id}" style="--kc:${s.color}"><span class="kid-thumb">${scene(s.scene, cover(s.scene))}</span><b><span class="n">${i + 1}</span>${esc(L(s.title))}</b>${st.stories[s.id] ? `<span class="kid-done">${icon('check')}</span>` : ''}</a>`).join('')}</div>`).join('')}
     <div class="kid-row">
       <a class="kid-tile" href="#/kids/games" style="--kc:#a55eea">${pic('star')}<b>${t('kids.games', 'Games')}</b></a>
       <a class="kid-tile" href="#/kids/game/color" style="--kc:#ff9f43">${pic('tree')}<b>${t('kids.color', 'Coloring')}</b></a>

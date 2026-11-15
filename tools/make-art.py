@@ -82,6 +82,14 @@ def run(job):
     if not raw:
         return
     im = Image.open(raw)
+    if max(im.convert('L').getextrema()) < 25:   # blocked/black picture: try another seed once
+        os.remove(raw)
+        raw = fetch(name, prompt + ', bright and cheerful', w, h, seed + 7)
+        if not raw:
+            return
+        im = Image.open(raw)
+        if max(im.convert('L').getextrema()) < 25:
+            os.remove(raw); print('BLACK', name, flush=True); return
     if kind == 'scene':
         im.convert('RGB').resize((960, 630), Image.LANCZOS).save(dst, quality=78, method=6)
     elif kind == 'color':
