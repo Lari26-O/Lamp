@@ -19,7 +19,7 @@ export function say(text, opts = {}) {
   if (!speech.supported || !text) return;
   const s = getSettings();
   speech.stop();
-  speech.speak(text, { rate: (s.ttsRate || 1) * 0.9, voice: s.ttsVoice, lang: LANG, ...opts });
+  speech.speak(text, { rate: (s.ttsRate || 1) * 0.92, pitch: 1.06, voice: s.ttsVoice, lang: LANG, ...opts });
 }
 const hear = (text, cls = '') => `<button class="kid-hear ${cls}" data-say="${esc(text)}" aria-label="${t('kids.hear', 'Hear it')}">${icon('speaker')}</button>`;
 const auto = text => { if (isPreReader()) setTimeout(() => say(text), 350); };

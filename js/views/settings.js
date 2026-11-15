@@ -52,9 +52,10 @@ export function render(el, { parts }) {
       <div class="scripture preview-box"><span class="verse"><sup class="vn">105</sup><span class="vt">${t('set.sample', 'Thy word is a lamp unto my feet, and a light unto my path.')}</span></span></div>`)}
 
     ${sect('tts', 'speaker', t('set.tts', 'Read aloud'), speech.supported ? `
-      <label class="field">${t('set.voice', 'Voice')}<select class="input" id="voice"><option value="">${t('set.default', 'Default')}</option></select></label>
+      <label class="field">${t('set.voice', 'Voice')}<select class="input" id="voice"><option value="">${t('set.autoVoice', 'Automatic (most natural voice)')}</option></select></label>
       <label class="field">${t('set.speed', 'Speed')}: <output id="rtOut">${s.ttsRate}×</output><input type="range" id="rt" min="0.5" max="1.8" step="0.1" value="${s.ttsRate}"></label>
-      <button class="btn" id="ttsTest">${icon('speaker')} ${t('set.testVoice', 'Test voice')}</button>` : `<p class="muted">${t('read.noTTS', 'Read-aloud is not supported in this browser')}</p>`)}
+      <button class="btn" id="ttsTest">${icon('speaker')} ${t('set.testVoice', 'Test voice')}</button>
+      <p class="muted small">${t('set.voiceTip', 'Voices come from your device. For the most natural voices on iPhone and iPad, go to Settings → Accessibility → Spoken Content → Voices, and download an “Enhanced” or “Premium” voice. On Windows, Microsoft Edge has natural online voices.')}</p>` : `<p class="muted">${t('read.noTTS', 'Read-aloud is not supported in this browser')}</p>`)}
 
     ${sect('remind', 'calendar', t('set.remind', 'Reminders & app'), `
       <div class="row between"><div><b>${t('pwa.title', 'Add Lamp to your home screen')}</b><p class="small muted" style="margin:2px 0 0">${isStandalone() ? t('pwa.installed', 'Lamp is installed on this device.') : t('pwa.cardSub', 'Add it to your home screen: opens like an app, works offline and can remind you every day.')}</p></div>

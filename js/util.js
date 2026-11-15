@@ -134,18 +134,52 @@ export function openDialog(title, bodyHtml, { wide = false, onClose } = {}) {
 }
 
 // ---- Text to speech ----
+// Picks the most natural voice the device has (Enhanced / Premium / Natural / Siri / Google voices),
+// avoids robotic and novelty voices, and reads sentence by sentence for natural pauses.
+const ROBOTIC = /espeak|compact|albert|bad news|bahh|bells|boing|bubbles|cellos|deranged|good news|hysterical|jester|junior|kathy|organ|ralph|fred|superstar|trinoids|whisper|wobble|zarvox|grandma|grandpa|rocko|shelley|flo|eddy|reed|sandy/i;
+const NICE = /samantha|ava|allison|zoe|evan|nathan|joelle|noelle|susan|serena|daniel|karen|moira|tessa|amélie|amelie|thomas|audrey|aurélie|marie|luciana|felipe|fernanda|joana|catarina|paulina|mónica|monica|jorge|marisol|francisca|helena|sabina|jenny|aria|guy|denise|henri|francisca|antonio|elvira|alvaro|dalia/i;
+function voiceScore(v, lang) {
+  const n = v.name;
+  let sc = 0;
+  if (v.lang.toLowerCase().startsWith(lang.toLowerCase())) sc += 100; else return -1;
+  if (/natural|neural|online/i.test(n)) sc += 60;
+  if (/premium/i.test(n)) sc += 55;
+  if (/enhanced|improved/i.test(n)) sc += 50;
+  if (/siri/i.test(n)) sc += 45;
+  if (/google/i.test(n)) sc += 35;
+  if (NICE.test(n)) sc += 20;
+  if (ROBOTIC.test(n)) sc -= 200;
+  if (v.localService === false) sc += 5;
+  const pref = { en: 'en-US', fr: 'fr-FR', pt: 'pt-BR', es: 'es-MX' }[lang.slice(0, 2)];
+  if (pref && v.lang === pref) sc += 8;
+  return sc;
+}
+export function bestVoice(lang) {
+  if (!('speechSynthesis' in window)) return null;
+  const list = speechSynthesis.getVoices().map(v => [voiceScore(v, lang.slice(0, 2)), v]).filter(([sc]) => sc > 0).sort((a, b) => b[0] - a[0]);
+  return list[0]?.[1] || null;
+}
+const sentences = text => (String(text).match(/[^.!?…]+[.!?…]+["”»’)]*|[^.!?…]+$/g) || [text]).map(x => x.trim()).filter(Boolean);
+let speakToken = 0;
 export const speech = {
   supported: 'speechSynthesis' in window,
   voices() { return this.supported ? speechSynthesis.getVoices() : []; },
-  stop() { if (this.supported) speechSynthesis.cancel(); },
-  speak(text, { rate = 1, voice = '', lang = 'en', onend, onstart } = {}) {
+  stop() { speakToken++; if (this.supported) speechSynthesis.cancel(); },
+  speak(text, { rate = 1, voice = '', lang = 'en', pitch = 1, onend, onstart } = {}) {
     if (!this.supported) return null;
-    const u = new SpeechSynthesisUtterance(text);
-    u.rate = rate;
-    const v = this.voices().find(x => x.voiceURI === voice) || this.voices().find(x => x.lang.startsWith(lang));
-    if (v) u.voice = v; else u.lang = lang;
-    u.onend = onend; u.onerror = onend; u.onstart = onstart;
-    speechSynthesis.speak(u);
-    return u;
+    const chosen = this.voices().find(x => x.voiceURI === voice && x.lang.toLowerCase().startsWith(lang.slice(0, 2).toLowerCase()));
+    const v = chosen || bestVoice(lang);
+    const parts = sentences(text);
+    const token = ++speakToken;
+    let first = null;
+    parts.forEach((part, i) => {
+      const u = new SpeechSynthesisUtterance(part);
+      u.rate = rate * 0.96; u.pitch = pitch;
+      if (v) { u.voice = v; u.lang = v.lang; } else u.lang = lang;
+      if (i === 0) { u.onstart = onstart; first = u; }
+      if (i === parts.length - 1) { u.onend = () => { if (token === speakToken) onend?.(); }; u.onerror = u.onend; }
+      speechSynthesis.speak(u);
+    });
+    return first;
   },
 };

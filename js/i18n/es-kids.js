@@ -45,4 +45,5 @@ export default {
   "st.started": "¡Racha iniciada!",
   "st.firstSub": "Vuelve mañana para llegar a 2.",
   "a11y.close": "Cerrar", "kids.undo": "Deshacer",
+  "set.autoVoice": "Automática (voz más natural)", "set.voiceTip": "Las voces vienen de tu dispositivo. Para voces más naturales en iPhone y iPad, ve a Ajustes → Accesibilidad → Contenido leído → Voces y descarga una voz “Mejorada” o “Premium”. En Windows, Microsoft Edge tiene voces naturales en línea.",
 };

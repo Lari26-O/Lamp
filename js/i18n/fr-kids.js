@@ -45,4 +45,5 @@ export default {
   "st.started": "Série commencée !",
   "st.firstSub": "Reviens demain pour arriver à 2.",
   "a11y.close": "Fermer", "kids.undo": "Annuler",
+  "set.autoVoice": "Automatique (voix la plus naturelle)", "set.voiceTip": "Les voix viennent de votre appareil. Pour des voix plus naturelles sur iPhone et iPad, allez dans Réglages → Accessibilité → Contenu énoncé → Voix, et téléchargez une voix « Améliorée » ou « Premium ». Sur Windows, Microsoft Edge propose des voix naturelles en ligne.",
 };
