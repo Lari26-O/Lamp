@@ -63,7 +63,7 @@ for sid, pages in P['SCENES'].items():
         name = f'{sid}-p{i + 1}'
         dst = os.path.join(OUT, name + '.webp')
         if want(name) and not os.path.exists(dst):
-            jobs.append(('scene', name, f"{desc}. {P['STYLE']}", dst, 101 + i))
+            jobs.append(('scene', name, f"{desc}. {P['STYLE']}", dst, 1000 + sum(map(ord, sid))))  # one seed per story keeps the look steadier
     name = f'color-{sid}'
     dst = os.path.join(OUT, 'color', sid + '.png')
     if want(name) and not os.path.exists(dst):
