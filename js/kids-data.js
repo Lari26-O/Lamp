@@ -7,7 +7,15 @@ import T2 from './kids-tales-2.js';
 import T3 from './kids-tales-3.js';
 import T4 from './kids-tales-4.js';
 import T5 from './kids-tales-5.js';
-const TALES = { ...T1, ...T2, ...T3, ...T4, ...T5 };
+import M1 from './kids-more-1.js';
+import M2 from './kids-more-2.js';
+import M3 from './kids-more-3.js';
+import M4 from './kids-more-4.js';
+import M5 from './kids-more-5.js';
+const MORE = { ...M1, ...M2, ...M3, ...M4, ...M5 };
+// Each page = the main sentences + the extra detail, joined per language.
+const join = (a, b) => b ? Object.fromEntries(Object.keys(a).map(l => [l, `${a[l]} ${b[l] || ''}`.trim()])) : a;
+const TALES = Object.fromEntries(Object.entries({ ...T1, ...T2, ...T3, ...T4, ...T5 }).map(([id, tl]) => [id, { ...tl, pages: tl.pages.map((pg, i) => join(pg, MORE[id]?.[i])) }]));
 import { hasArt, hasPic } from './kids-art.js';
 const S = (en, fr, pt, es) => ({ en, fr, pt, es });
 

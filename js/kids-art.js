@@ -17,7 +17,12 @@ const has = f => READY.has(f);
 // v2 pictures are named <id>-p<n>.webp (8 per story); earlier ones <id>-<n>.webp (6 per story).
 const v2 = id => Array.from({ length: 8 }, (_, i) => `${id}-p${i + 1}.webp`).every(has);
 export const painted = (id, pages = 6) => v2(id) || Array.from({ length: pages }, (_, i) => `${id}-${i + 1}.webp`).every(has);
-const pageFile = (id, n) => has(`${id}-p${n}.webp`) ? `${id}-p${n}.webp` : `${id}-${Math.min(6, Math.max(1, Math.round(n * 6 / 8)))}.webp`;
+// Which earlier (6-page) picture best fits each new page, until the 8-page pictures exist.
+const OLD_MAP = {
+  christmas: [1, 1, 1, 2, 3, 4, 5, 6], friends: [2, 1, 3, 4, 4, 5, 5, 6], feeding: [1, 2, 3, 4, 4, 5, 6, 6],
+  children: [1, 1, 2, 3, 4, 5, 5, 6], samaritan: [1, 1, 2, 3, 4, 5, 5, 6], blind: [2, 1, 2, 3, 4, 3, 5, 6],
+};
+const pageFile = (id, n) => has(`${id}-p${n}.webp`) ? `${id}-p${n}.webp` : `${id}-${OLD_MAP[id]?.[n - 1] || Math.min(6, Math.max(1, Math.round(n * 6 / 8)))}.webp`;
 export const hasArt = id => painted(id) || FLAT_SCENES.includes(id);
 export const sceneSrc = (id, n = 1) => BASE + pageFile(id, n);
 export const colorSrc = id => has(`color/${id}.png`) ? `${BASE}color/${id}.png` : flatColorSrc(id);
