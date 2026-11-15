@@ -826,7 +826,7 @@ body[data-view="widget"] main { margin: 0 auto; padding: 12px; max-width: 460px;
 @media (prefers-reduced-motion: reduce) { .streak-pop { transition: none; } .sp-flame { animation: none !important; } }
 
 .kid-streak .kid-hear { position: static; vertical-align: middle; width: 40px; height: 40px; margin-left: 6px; }
-.kid-scene { display: block; width: 100%; height: auto; aspect-ratio: 880 / 578; object-fit: cover; border-radius: 22px; background: #f3ecff; }
+.kid-scene { display: block; width: 100%; height: auto; aspect-ratio: 960 / 630; object-fit: cover; border-radius: 22px; background: #f3ecff; }
 .kid-scene.line { background: #fff; }
 .kid-pic { display: block; object-fit: contain; filter: drop-shadow(0 3px 4px rgba(60, 30, 90, .18)); }
 .color-canvas canvas { display: block; width: 100%; height: auto; border-radius: 16px; touch-action: manipulation; cursor: pointer; }

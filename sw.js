@@ -1,11 +1,11 @@
 // Lamp service worker: offline cache, reminders (push + periodic sync), widgets.
-const VERSION = 'lamp-v7';
+const VERSION = 'lamp-v8';
 const SHELL = [
   './', 'index.html', 'css/styles.css', 'manifest.webmanifest', 'icons/icon.svg', 'icons/icon-192.png', 'icons/favicon-32.png',
   'js/app.js', 'js/util.js', 'js/store.js', 'js/bible.js', 'js/srs.js', 'js/ai.js', 'js/components.js', 'js/i18n.js', 'js/config.js', 'js/connect.js', 'js/learn-data.js',
   'js/i18n/fr.js', 'js/i18n/pt.js', 'js/i18n/es.js', 'js/i18n/fr-more.js', 'js/i18n/pt-more.js', 'js/i18n/es-more.js', 'js/i18n/fr-kids.js', 'js/i18n/pt-kids.js', 'js/i18n/es-kids.js', 'js/data/l10n.js',
   'js/data/books.js', 'js/data/places.js', 'js/data/timeline.js', 'js/data/people.js', 'js/data/trivia.js',
-  'js/profile.js', 'js/cloud.js', 'js/plans-data.js', 'js/learn-books.js', 'js/challenges.js', 'js/streaks.js', 'js/pwa.js', 'js/kids-art.js', 'js/kids-data.js',
+  'js/profile.js', 'js/cloud.js', 'js/plans-data.js', 'js/learn-books.js', 'js/challenges.js', 'js/streaks.js', 'js/pwa.js', 'js/kids-art.js', 'js/kids-data.js', 'js/kids-stories-ot.js', 'js/kids-pages.js',
   'js/views/home.js', 'js/views/reader.js', 'js/views/search.js', 'js/views/ask.js', 'js/views/memory.js', 'js/views/quiz.js', 'js/views/notes.js', 'js/views/map.js',
   'js/views/timeline.js', 'js/views/people.js', 'js/views/videos.js', 'js/views/settings.js', 'js/views/learn.js', 'js/views/study.js', 'js/views/plans.js',
   'js/views/prayer.js', 'js/views/account.js', 'js/views/kids.js', 'js/views/challenge.js', 'js/views/widget.js',
@@ -30,7 +30,7 @@ self.addEventListener('fetch', e => {
   const fonts = url.host === 'fonts.googleapis.com' || url.host === 'fonts.gstatic.com';
   const bibleApi = url.host === 'bible-api.com';
   if (!sameOrigin && !fonts && !bibleApi) return;
-  if ((sameOrigin && url.pathname.includes('/data/')) || fonts) {
+  if ((sameOrigin && (url.pathname.includes('/data/') || url.pathname.includes('/img/kids/'))) || fonts) {
     e.respondWith(caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
       if (res.ok || res.type === 'opaque') { const copy = res.clone(); caches.open(VERSION).then(c => c.put(e.request, copy)); }
       return res;

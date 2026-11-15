@@ -18,7 +18,7 @@ export default {
   "ch.auto": "Este se completa sozinho quando você faz no app.", "ch.streak": "Sequência de desafios", "ch.tomorrow": "Amanhã:",
   "pwa.cardTitle": "Tenha o app Lamp", "pwa.cardSub": "Adicione à sua tela inicial: abre como um app, funciona offline e pode lembrar você todos os dias.",
   "kids.hear": "Ouvir", "kids.cheers": "Muito bem!|Isso! Parabéns!|Incrível!|Você conseguiu!|Demais!", "kids.hi": "Oi, {name}!", "kids.hiAll": "Oi, amiguinho!",
-  "kids.welcome": "Vamos aprender sobre Jesus!", "kids.todayChallenge": "Desafio de hoje", "kids.stories": "Histórias de Jesus", "kids.remember": "Lembre-se:",
+  "kids.welcome": "Vamos aprender sobre Jesus!", "kids.todayChallenge": "Desafio de hoje", "kids.stories": "Histórias de Jesus", "kids.otStories": "Histórias do Antigo Testamento", "kids.remember": "Lembre-se:",
   "kids.sayWithMe": "Fale comigo!", "kids.listenRepeat": "Ouça e depois repita", "kids.talk": "Vamos conversar", "kids.storyDone": "Você terminou a história! Ganhou um adesivo!",
   "kids.colorThis": "Pintar esta história", "kids.home": "Início", "kids.next": "Próximo", "kids.yourTurn": "Agora é sua vez!", "kids.tryAgain": "Tente de novo!",
   "kids.memory": "Jogo da memória", "kids.memoryH": "Encontre as figuras iguais!", "kids.quiz": "Quiz de figuras", "kids.quizH": "Ouça e toque na figura certa!",

@@ -1,9 +1,12 @@
 // Children's mode content (Pre-K – 3rd grade). Each story teaches one simple
 // truth, focused on Jesus and on loving one another. Verse lines are short,
 // child-friendly wordings with their reference.
+import { OT_STORIES } from './kids-stories-ot.js';
+import { PAGES } from './kids-pages.js';
+import { hasArt, hasPic } from './kids-art.js';
 const S = (en, fr, pt, es) => ({ en, fr, pt, es });
 
-export const STORIES = [
+const BASE_STORIES = [
   { id: 'creation', scene: 'creation', ref: 'Genesis 1:1-31', sticker: 'sun', color: '#00b894',
     title: S('God made everything', 'Dieu a tout créé', 'Deus fez tudo', 'Dios hizo todo'),
     pages: [
@@ -168,6 +171,13 @@ export const STORIES = [
     quiz: [{ q: S('Who is always with you?', 'Qui est toujours avec toi ?', 'Quem está sempre com você?', '¿Quién está siempre contigo?'), a: 'jesus', opts: ['jesus', 'boat', 'tree'] }] },
 ];
 
+// Old Testament first (in Bible order), then the life of Jesus.
+const OT_ORDER = ['creation', 'noah', 'abraham', 'joseph', 'babymoses', 'redsea', 'jericho', 'ruth', 'samuel', 'david', 'jonah', 'daniel', 'esther'];
+const all = [...BASE_STORIES, ...OT_STORIES.map(st => ({ ...st, scene: st.id }))].map(st => ({ ...st, pages: PAGES[st.id] || st.pages, part: OT_ORDER.includes(st.id) ? 'ot' : 'nt' }));
+// A story appears once its pictures exist (painted or drawn) and its quiz pictures exist.
+const ok = st => hasArt(st.id) && hasPic(st.sticker) && st.quiz.every(q => q.opts.every(hasPic));
+export const STORIES = [...all.filter(st => st.part === 'nt'), ...OT_ORDER.map(id => all.find(st => st.id === id))].filter(ok);
+
 // Words for the picture cards (said aloud in games).
 export const PIC_WORDS = {
   star: S('Star', 'Étoile', 'Estrela', 'Estrella'), baby: S('Baby Jesus', 'Bébé Jésus', 'Bebê Jesus', 'Bebé Jesús'), boat: S('Boat', 'Bateau', 'Barco', 'Barca'),
@@ -175,6 +185,10 @@ export const PIC_WORDS = {
   tree: S('Tree', 'Arbre', 'Árvore', 'Árbol'), sun: S('Sun', 'Soleil', 'Sol', 'Sol'), dove: S('Dove', 'Colombe', 'Pomba', 'Paloma'), tomb: S('Empty tomb', 'Tombeau vide', 'Túmulo vazio', 'Tumba vacía'),
   basket: S('Lunch basket', 'Panier du repas', 'Cesta de lanche', 'Canasta del almuerzo'), people: S('People', 'Les gens', 'Pessoas', 'Personas'), jesus: S('Jesus', 'Jésus', 'Jesus', 'Jesús'),
   house: S('House', 'Maison', 'Casa', 'Casa'), bandage: S('Bandage', 'Pansement', 'Curativo', 'Venda'),
+  ark: S('Big boat', 'Grand bateau', 'Arca', 'Arca'), rainbow: S('Rainbow', 'Arc-en-ciel', 'Arco-íris', 'Arcoíris'), coat: S('Colorful coat', 'Manteau de couleurs', 'Túnica colorida', 'Túnica de colores'),
+  reeds: S('Basket on the river', 'Panier sur le fleuve', 'Cestinho no rio', 'Canasta en el río'), staff: S('Shepherd’s stick', 'Bâton', 'Cajado', 'Vara'), trumpet: S('Trumpet', 'Trompette', 'Trombeta', 'Trompeta'),
+  wall: S('Wall', 'Muraille', 'Muralha', 'Muralla'), wheat: S('Wheat', 'Blé', 'Trigo', 'Trigo'), lamp: S('Lamp', 'Lampe', 'Lâmpada', 'Lámpara'), sling: S('Sling and stone', 'Fronde et pierre', 'Funda e pedra', 'Honda y piedra'),
+  whale: S('Big fish', 'Gros poisson', 'Grande peixe', 'Gran pez'), lion: S('Lion', 'Lion', 'Leão', 'León'), crown: S('Crown', 'Couronne', 'Coroa', 'Corona'),
 };
 
 // Life of Jesus in order (for the "put in order" game).

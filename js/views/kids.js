@@ -63,8 +63,8 @@ function home(el) {
     </section>
     <a class="kid-card challenge ${done ? 'done' : ''}" href="#/kids/today"><span class="kid-ico">${icon(done ? 'check' : 'star')}</span><div><b>${t('kids.todayChallenge', 'Today’s challenge')}</b><p>${esc(challengeText(ch))}</p></div>${hear(challengeText(ch))}</a>
     ${ks.html.replace('</b><ol', '</b> ' + hear(ks.text) + '<ol')}
-    <h2 class="kid-title">${t('kids.stories', 'Stories about Jesus')} ${hear(t('kids.stories', 'Stories about Jesus'))}</h2>
-    <div class="kid-grid">${STORIES.map((s, i) => `<a class="kid-story ${st.stories[s.id] ? 'done' : ''}" href="#/kids/story/${s.id}" style="--kc:${s.color}"><span class="kid-thumb">${scene(s.scene, 3)}</span><b><span class="n">${i + 1}</span>${esc(L(s.title))}</b>${st.stories[s.id] ? `<span class="kid-done">${icon('check')}</span>` : ''}</a>`).join('')}</div>
+    ${[['nt', t('kids.stories', 'Stories about Jesus')], ['ot', t('kids.otStories', 'Old Testament stories')]].map(([part, label]) => `<h2 class="kid-title">${label} ${hear(label)}</h2>
+    <div class="kid-grid">${STORIES.filter(s => s.part === part).map((s, i) => `<a class="kid-story ${st.stories[s.id] ? 'done' : ''}" href="#/kids/story/${s.id}" style="--kc:${s.color}"><span class="kid-thumb">${scene(s.scene, 3)}</span><b><span class="n">${i + 1}</span>${esc(L(s.title))}</b>${st.stories[s.id] ? `<span class="kid-done">${icon('check')}</span>` : ''}</a>`).join('')}</div>`).join('')}
     <div class="kid-row">
       <a class="kid-tile" href="#/kids/games" style="--kc:#a55eea">${pic('star')}<b>${t('kids.games', 'Games')}</b></a>
       <a class="kid-tile" href="#/kids/game/color" style="--kc:#ff9f43">${pic('tree')}<b>${t('kids.color', 'Coloring')}</b></a>
@@ -217,7 +217,7 @@ function coloring(el, id) {
   const s = STORIES.find(x => x.id === id) || STORIES[0];
   let color = PALETTE[0];
   el.innerHTML = `<div class="kid-top"><a class="kid-round" href="#/kids/game/color">${icon('chevL')}</a><h1 class="kid-title">${esc(L(s.title))}</h1>${hear(t('kids.colorH', 'Pick a color and tap the picture!'), 'lg')}</div>
-    <div class="color-wrap"><div class="color-canvas"><canvas width="880" height="578" aria-label="${esc(L(s.title))}"></canvas></div>
+    <div class="color-wrap"><div class="color-canvas"><canvas width="960" height="630" aria-label="${esc(L(s.title))}"></canvas></div>
     <div class="palette">${PALETTE.map(c => `<button class="pal" data-c="${c}" style="background:${c}" aria-label="${c}" aria-pressed="${c === color}"></button>`).join('')}</div></div>
     <div class="kid-row center"><button class="kid-btn alt" id="undoC">${icon('chevL')} ${t('kids.undo', 'Undo')}</button><button class="kid-btn alt" id="magic">${icon('spark')} ${t('kids.magic', 'Show real colors')}</button><button class="kid-btn" id="doneC">${icon('check')} ${t('kids.doneColor', 'I’m done!')}</button></div>`;
   auto(t('kids.colorH', 'Pick a color and tap the picture!'));
