@@ -832,3 +832,7 @@ body[data-view="widget"] main { margin: 0 auto; padding: 12px; max-width: 460px;
 .color-canvas canvas { display: block; width: 100%; height: auto; border-radius: 16px; touch-action: manipulation; cursor: pointer; }
 .mem-card .front .kid-pic { width: 82%; height: auto; }
 .order-card .kid-scene, .slot .kid-scene { border-radius: 14px; }
+.kid-recap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+.kid-recap span { display: block; border-radius: 16px; overflow: hidden; box-shadow: 0 3px 0 rgba(60, 30, 90, .12); }
+.kid-recap span:nth-child(2) { transform: translateY(-6px) rotate(1.5deg); } .kid-recap span:first-child { transform: rotate(-1.5deg); }
+.kid-recap .kid-scene, .kid-recap svg { display: block; width: 100%; height: auto; border-radius: 0; }

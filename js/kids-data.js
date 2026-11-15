@@ -2,7 +2,12 @@
 // truth, focused on Jesus and on loving one another. Verse lines are short,
 // child-friendly wordings with their reference.
 import { OT_STORIES } from './kids-stories-ot.js';
-import { PAGES } from './kids-pages.js';
+import T1 from './kids-tales-1.js';
+import T2 from './kids-tales-2.js';
+import T3 from './kids-tales-3.js';
+import T4 from './kids-tales-4.js';
+import T5 from './kids-tales-5.js';
+const TALES = { ...T1, ...T2, ...T3, ...T4, ...T5 };
 import { hasArt, hasPic } from './kids-art.js';
 const S = (en, fr, pt, es) => ({ en, fr, pt, es });
 
@@ -173,7 +178,7 @@ const BASE_STORIES = [
 
 // Old Testament first (in Bible order), then the life of Jesus.
 const OT_ORDER = ['creation', 'noah', 'abraham', 'joseph', 'babymoses', 'redsea', 'jericho', 'ruth', 'samuel', 'david', 'jonah', 'daniel', 'esther'];
-const all = [...BASE_STORIES, ...OT_STORIES.map(st => ({ ...st, scene: st.id }))].map(st => ({ ...st, pages: PAGES[st.id] || st.pages, part: OT_ORDER.includes(st.id) ? 'ot' : 'nt' }));
+const all = [...BASE_STORIES, ...OT_STORIES.map(st => ({ ...st, scene: st.id }))].map(st => ({ ...st, pages: TALES[st.id]?.pages || st.pages, summary: TALES[st.id]?.summary, part: OT_ORDER.includes(st.id) ? 'ot' : 'nt' }));
 // A story appears once its pictures exist (painted or drawn) and its quiz pictures exist.
 const ok = st => hasArt(st.id) && hasPic(st.sticker) && st.quiz.every(q => q.opts.every(hasPic));
 export const STORIES = [...all.filter(st => st.part === 'nt'), ...OT_ORDER.map(id => all.find(st => st.id === id))].filter(ok);

@@ -18,7 +18,7 @@ export default {
   "ch.auto": "Este se completa solo cuando lo haces en la app.", "ch.streak": "Racha de desafíos", "ch.tomorrow": "Mañana:",
   "pwa.cardTitle": "Consigue la app Lamp", "pwa.cardSub": "Añádela a tu pantalla de inicio: se abre como una app, funciona sin conexión y puede recordártelo cada día.",
   "kids.hear": "Escuchar", "kids.cheers": "¡Muy bien!|¡Sí! ¡Bien hecho!|¡Genial!|¡Lo lograste!|¡Súper!", "kids.hi": "¡Hola, {name}!", "kids.hiAll": "¡Hola, amiguito!",
-  "kids.welcome": "¡Vamos a aprender sobre Jesús!", "kids.todayChallenge": "El desafío de hoy", "kids.stories": "Historias de Jesús", "kids.otStories": "Historias del Antiguo Testamento", "kids.remember": "Recuerda:",
+  "kids.welcome": "¡Vamos a aprender sobre Jesús!", "kids.todayChallenge": "El desafío de hoy", "kids.stories": "Historias de Jesús", "kids.otStories": "Historias del Antiguo Testamento", "kids.summary": "La historia en resumen", "kids.remember": "Recuerda:",
   "kids.sayWithMe": "¡Dilo conmigo!", "kids.listenRepeat": "Escucha y luego repite", "kids.talk": "Hablemos", "kids.storyDone": "¡Terminaste la historia! ¡Ganaste una pegatina!",
   "kids.colorThis": "Colorear esta historia", "kids.home": "Inicio", "kids.next": "Siguiente", "kids.yourTurn": "¡Ahora dilo tú!", "kids.tryAgain": "¡Inténtalo otra vez!",
   "kids.memory": "Juego de memoria", "kids.memoryH": "¡Encuentra los dibujos iguales!", "kids.quiz": "Quiz de dibujos", "kids.quizH": "¡Escucha y toca el dibujo correcto!",

@@ -18,7 +18,7 @@ export default {
   "ch.auto": "Celui-ci se valide tout seul quand vous le faites dans l’appli.", "ch.streak": "Série de défis", "ch.tomorrow": "Demain :",
   "pwa.cardTitle": "Obtenir l’appli Lamp", "pwa.cardSub": "Ajoutez-la à votre écran d’accueil : elle s’ouvre comme une appli, fonctionne hors ligne et peut vous le rappeler chaque jour.",
   "kids.hear": "Écouter", "kids.cheers": "Bravo !|Oui ! Bien joué !|Génial !|Tu as réussi !|Super !", "kids.hi": "Salut, {name} !", "kids.hiAll": "Salut, mon ami !",
-  "kids.welcome": "Apprenons à connaître Jésus !", "kids.todayChallenge": "Le défi du jour", "kids.stories": "Histoires de Jésus", "kids.otStories": "Histoires de l’Ancien Testament", "kids.remember": "Souviens-toi :",
+  "kids.welcome": "Apprenons à connaître Jésus !", "kids.todayChallenge": "Le défi du jour", "kids.stories": "Histoires de Jésus", "kids.otStories": "Histoires de l’Ancien Testament", "kids.summary": "L’histoire en bref", "kids.remember": "Souviens-toi :",
   "kids.sayWithMe": "Dis-le avec moi !", "kids.listenRepeat": "Écoute, puis répète", "kids.talk": "Parlons-en", "kids.storyDone": "Tu as fini l’histoire ! Tu gagnes un autocollant !",
   "kids.colorThis": "Colorier cette histoire", "kids.home": "Accueil", "kids.next": "Suivant", "kids.yourTurn": "À toi de le dire !", "kids.tryAgain": "Essaie encore !",
   "kids.memory": "Jeu de mémoire", "kids.memoryH": "Trouve les images pareilles !", "kids.quiz": "Quiz en images", "kids.quizH": "Écoute et touche la bonne image !",

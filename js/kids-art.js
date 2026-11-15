@@ -14,13 +14,16 @@ const COLOR_FROM = {
   noah: 3, abraham: 5, joseph: 1, babymoses: 3, redsea: 5, jericho: 4, ruth: 4, samuel: 2, david: 5, jonah: 3, daniel: 5, esther: 5,
 };
 const has = f => READY.has(f);
-export const painted = (id, pages = 6) => Array.from({ length: pages }, (_, i) => `${id}-${i + 1}.webp`).every(has);
+// v2 pictures are named <id>-p<n>.webp (8 per story); earlier ones <id>-<n>.webp (6 per story).
+const v2 = id => Array.from({ length: 8 }, (_, i) => `${id}-p${i + 1}.webp`).every(has);
+export const painted = (id, pages = 6) => v2(id) || Array.from({ length: pages }, (_, i) => `${id}-${i + 1}.webp`).every(has);
+const pageFile = (id, n) => has(`${id}-p${n}.webp`) ? `${id}-p${n}.webp` : `${id}-${Math.min(6, Math.max(1, Math.round(n * 6 / 8)))}.webp`;
 export const hasArt = id => painted(id) || FLAT_SCENES.includes(id);
-export const sceneSrc = (id, n = 1) => `${BASE}${id}-${n}.webp`;
+export const sceneSrc = (id, n = 1) => BASE + pageFile(id, n);
 export const colorSrc = id => has(`color/${id}.png`) ? `${BASE}color/${id}.png` : flatColorSrc(id);
 export const realSrc = id => painted(id) ? sceneSrc(id, COLOR_FROM[id] || 1) : flatRealSrc(id);
 export function scene(id, n = 1, { eager = false } = {}) {
-  if (!painted(id)) return flatScene(id, Math.min(4, Math.ceil(n * 4 / 6)));
+  if (!painted(id)) return flatScene(id, Math.min(4, Math.max(1, Math.ceil(n * 4 / 8))));
   return `<img class="kid-scene" src="${sceneSrc(id, n)}" alt="" width="960" height="630" ${eager ? '' : 'loading="lazy"'} decoding="async">`;
 }
 export function pic(id) {

@@ -77,6 +77,7 @@ function story(el, id) {
   const s = STORIES.find(x => x.id === id); if (!s) { location.hash = '#/kids'; return; }
   const steps = [
     ...s.pages.map((pg, n) => ({ kind: 'page', text: L(pg), n: n + 1 })),
+    ...(s.summary ? [{ kind: 'summary', text: L(s.summary) }] : []),
     { kind: 'truth', text: L(s.truth) },
     { kind: 'verse', text: L(s.verse.text), ref: s.verse.ref },
     { kind: 'talk', text: L(s.talk) },
@@ -89,6 +90,7 @@ function story(el, id) {
     const dots = `<div class="kid-dots">${steps.map((_, k) => `<i class="${k < i ? 'on' : k === i ? 'cur' : ''}"></i>`).join('')}</div>`;
     let body = '', speakText = '';
     if (step.kind === 'page') { speakText = step.text; body = `<div class="kid-scene-box">${scene(s.scene, step.n, { eager: true })}</div><p class="kid-text" data-say="${esc(step.text)}">${esc(step.text)}</p>`; }
+    if (step.kind === 'summary') { speakText = step.text; body = `<div class="kid-recap">${[2, 5, 8].map(n => `<span>${scene(s.scene, n)}</span>`).join('')}</div><p class="kid-label">${t('kids.summary', 'The story in short')}</p><p class="kid-text" data-say="${esc(step.text)}">${esc(step.text)}</p>`; }
     if (step.kind === 'truth') { speakText = step.text; body = `<div class="kid-big-ico" style="--kc:${s.color}">${pic('heart')}</div><p class="kid-label">${t('kids.remember', 'Remember:')}</p><p class="kid-text big" data-say="${esc(step.text)}">${esc(step.text)}</p>`; }
     if (step.kind === 'verse') { speakText = step.text; body = `<div class="kid-big-ico" style="--kc:#ffd23f">${pic('dove')}</div><p class="kid-label">${t('kids.sayWithMe', 'Say it with me!')}</p><p class="kid-text big" data-say="${esc(step.text)}">“${esc(step.text)}”</p><p class="kid-ref">${esc(step.ref)}</p><button class="kid-btn" id="echo">${icon('speaker')} ${t('kids.listenRepeat', 'Listen, then say it')}</button>`; }
     if (step.kind === 'talk') { speakText = step.text; body = `<div class="kid-big-ico" style="--kc:#74b9ff">${pic('people')}</div><p class="kid-label">${t('kids.talk', 'Talk about it')}</p><p class="kid-text big" data-say="${esc(step.text)}">${esc(step.text)}</p>`; }

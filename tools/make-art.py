@@ -60,7 +60,7 @@ jobs = []
 want = lambda k: len(sys.argv) < 2 or any(k.startswith(a) for a in sys.argv[1:])
 for sid, pages in P['SCENES'].items():
     for i, desc in enumerate(pages):
-        name = f'{sid}-{i + 1}'
+        name = f'{sid}-p{i + 1}'
         dst = os.path.join(OUT, name + '.webp')
         if want(name) and not os.path.exists(dst):
             jobs.append(('scene', name, f"{desc}. {P['STYLE']}", dst, 101 + i))
