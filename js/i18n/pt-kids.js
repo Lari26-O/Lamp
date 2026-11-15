@@ -46,4 +46,5 @@ export default {
   "st.firstSub": "Volte amanhã para chegar a 2.",
   "a11y.close": "Fechar", "kids.undo": "Desfazer",
   "set.autoVoice": "Automática (voz mais natural)", "set.voiceTip": "As vozes vêm do seu aparelho. Para vozes mais naturais no iPhone e iPad, vá em Ajustes → Acessibilidade → Conteúdo Falado → Vozes e baixe uma voz “Melhorada” ou “Premium”. No Windows, o Microsoft Edge tem vozes naturais online.",
+  "ob.learnPick": "Vou escolher outro livro", "ob.learnPickSub": "Escolha qualquer livro da Bíblia para aprender.", "ob.learnNone": "Sem lições por enquanto, só quero explorar", "ob.learnNoneSub": "Leia a Bíblia, faça anotações e use tudo à vontade.", "ob.plansOptional": "Planos de leitura que você pode gostar (opcional, comece quando quiser em Planos):", "home.learnAny": "Aprender um livro da Bíblia", "home.learnAnySub": "Opcional: lições curtas sobre o livro que você escolher.",
 };

@@ -40,7 +40,9 @@ export function render(el, { parts }) {
   if (a === 'sec') return sectionLesson(el, +b, +c, false);
   if (a === 'rev') return sectionLesson(el, +b, +c, true);
   if (a === 'book' && BOOKS[+b]) { setProfile({ learnBook: +b }); }
-  return bookPath(el, a === 'book' ? +b : currentBook());
+  const cb = a === 'book' ? +b : currentBook();
+  if (!BOOKS[cb]) return bookPicker(el);   // no book chosen yet: show the picker
+  return bookPath(el, cb);
 }
 
 // ---------- shared UI ----------

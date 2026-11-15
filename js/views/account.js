@@ -66,7 +66,7 @@ export function render(el, { parts }) {
 
 function onboarding(el) {
   const p = getProfile();
-  const st = { step: 0, lang: LANG, name: p.name, age: p.age, goals: new Set(p.goals || []), minutes: p.minutes || 10 };
+  const st = { step: 0, learn: 'yes', lang: LANG, name: p.name, age: p.age, goals: new Set(p.goals || []), minutes: p.minutes || 10 };
   const total = 6;
   const draw = () => {
     const head = st.step > 0 ? `<div class="play-head"><button class="icon-btn" id="obBack" aria-label="${t('common.back', 'Back')}">${icon('chevL')}</button><div class="progress grow"><i style="width:${(st.step / total) * 100}%"></i></div></div>` : '';
@@ -89,10 +89,12 @@ function onboarding(el) {
         <p class="small muted">${t('ob.kidsGate', 'Grown-ups can open the full app with the “Grown-ups” button.')}</p>`; } else
       body = `<h1 class="ob-q">${st.name ? t('ob.readyName', 'You’re all set, {name}!', { name: esc(st.name) }) : t('ob.ready', 'You’re all set!')}</h1>
         <p class="muted">${t('ob.recommend', 'Here is a good place to start:')}</p>
-        <div class="stack">
-          <div class="card tile"><span class="ico-wrap">${icon('path')}</span><div><b>${t('ob.learnBook', 'Learn the book of {book}', { book: esc(bookName(age.book)) })}</b><p>${t('ob.learnBookSub', 'Short lessons, section by section.')}</p></div></div>
-          ${plans.map(pl => `<div class="card tile"><span class="ico-wrap">${icon('calendar')}</span><div><b>${esc(planTitle(pl))}</b><p>${t('plans.days', '{n} days', { n: pl.days.length })}</p></div></div>`).join('')}
+        <div class="choice-list">
+          <button class="choice ${st.learn === 'yes' ? 'on' : ''}" data-learn="yes">${icon('path')}<b>${t('ob.learnBook', 'Learn the book of {book}', { book: esc(bookName(age.book)) })}</b><span>${t('ob.learnBookSub', 'Short lessons, section by section.')}</span></button>
+          <button class="choice ${st.learn === 'pick' ? 'on' : ''}" data-learn="pick">${icon('book')}<b>${t('ob.learnPick', 'I’ll choose a different book')}</b><span>${t('ob.learnPickSub', 'Pick any book of the Bible to learn.')}</span></button>
+          <button class="choice ${st.learn === 'none' ? 'on' : ''}" data-learn="none">${icon('compass')}<b>${t('ob.learnNone', 'No lessons for now, I’ll just explore')}</b><span>${t('ob.learnNoneSub', 'Read the Bible, take notes and use everything freely.')}</span></button>
         </div>
+        ${plans.length ? `<p class="muted small" style="margin-top:14px">${t('ob.plansOptional', 'Reading plans you might like (optional, start them any time from Plans):')} ${plans.map(pl => esc(planTitle(pl))).join(' · ')}</p>` : ''}
         ${cloudEnabled() ? `<section class="card" style="margin-top:16px"><h3 class="card-title">${icon('globe')} ${t('ob.save', 'Save your progress')}</h3><p class="small muted">${t('ob.saveSub', 'Create a free account to keep your notes and progress on any device.')}</p><div id="obAuth2"></div></section>` : ''}`;
     }
     el.innerHTML = `<div class="onboard">${head}<div class="ob-body">${body}</div>${st.step > 0 ? `<div class="lesson-foot"><button class="btn primary wide" id="obNext" ${canNext ? '' : 'disabled'}>${st.step === 6 ? t('ob.finish', 'Start') : t('learn.continue', 'Continue')}</button></div>` : ''}</div>`;
@@ -110,14 +112,15 @@ function onboarding(el) {
     $('#obNext', el)?.addEventListener('click', () => {
       if (st.step < 6) { st.step++; draw(); return; }
       const age = ageById(st.age);
-      setProfile({ done: true, name: st.name, age: st.age, goals: [...st.goals], minutes: st.minutes, created: Date.now(), learnBook: age.book });
+      setProfile({ done: true, name: st.name, age: st.age, goals: [...st.goals], minutes: st.minutes, created: Date.now(), learnBook: st.learn === 'yes' ? age.book : -1 });
       const s = getSettings();
       setSettings({ dailyGoal: { 5: 10, 10: 20, 15: 30, 20: 50 }[st.minutes], ...(st.age === 'senior' && s.fontSize === 19 ? { fontSize: 22 } : {}), ...(st.age === 'kids' && s.font === 'serif' ? { font: 'atkinson' } : {}) });
       document.documentElement.style.setProperty('--read-size', getSettings().fontSize + 'px');
       document.documentElement.dataset.font = getSettings().font;
       window.dispatchEvent(new Event('lamp:nav'));
-      location.hash = '#/home';
+      location.hash = st.learn === 'pick' && !age.kids ? '#/learn/books' : '#/home';
     });
+    el.querySelectorAll('[data-learn]').forEach(btn => btn.addEventListener('click', () => { st.learn = btn.dataset.learn; el.querySelectorAll('[data-learn]').forEach(x => x.classList.toggle('on', x === btn)); }));
   };
   draw();
 }
