@@ -91,9 +91,9 @@ function buildChrome() {
   }
   $('#kidsBack').innerHTML = `${icon('sun')} <span>${t('gate.back', 'Kids mode')}</span>`;
   const due = dueCount();
-  // Younger readers (4th–6th grade) get a simpler menu with only the parts made for them.
+  // Kindergarten–3rd grade profiles get a simpler menu (when a grown-up opens the full app for them).
   const SIMPLE = ['study', 'ask', 'notes', 'videos', 'search'];
-  const nav = NAV().filter(n => !(getProfile().age && currentAge().id === 'preteen' && SIMPLE.includes(n.id)));
+  const nav = NAV().filter(n => !(getProfile().age && currentAge().kids && SIMPLE.includes(n.id)));
   $('#sidenav').innerHTML = nav.map(n => n.group !== undefined
     ? (n.group ? `<div class="group">${esc(n.group)}</div>` : '<hr>')
     : `<a href="#/${n.id}" data-id="${n.id}">${icon(n.icon)}<span>${esc(n.label)}</span>${n.badge && due ? `<span class="badge" aria-label="${due}">${due}</span>` : ''}</a>`).join('')
