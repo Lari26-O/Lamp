@@ -11,7 +11,7 @@ It is a plain static website: there's no server, no build step and no account. Y
 ### Accounts, age groups and sync
 - **First-launch welcome**: the app asks for your language, name, age group, goals and daily time. Six age groups: Kids 6–9, Preteens 10–12, Teens 13–17, Young adults 18–25, Adults 26–59, Seniors 60+.
 - **Age changes the app**: lesson length and difficulty (kids get 3 answer choices and shorter sections), the first book suggested, recommended plans, the "questions people your age ask", the AI's tone, and an easier-to-read font for kids and larger text for seniors.
-- **Optional account with sync** (email and password) through **Supabase**. It uses the same Supabase project as Weeklan, so one account works in both apps. Notes, highlights, plans, progress and your profile sync across devices. Everything also works without an account.
+- **Optional account with sync** (email and password) through **Supabase**. It uses Lamp's own Supabase project. Notes, highlights, plans, progress and your profile sync across devices. Everything also works without an account.
 
 ### Reading plans, YouVersion-style
 - **Book plans**: John (21 days), Mark, Acts, Genesis, Romans, Psalms in 30 days, Proverbs in 31 days.
@@ -107,7 +107,7 @@ Users pick one in Settings → AI.
 The AI always answers in the user's language.
 
 ## Turn on accounts (one-time)
-1. Open your Supabase project (the same one Weeklan uses), go to **SQL Editor**, paste **`docs/supabase.sql`** and click **Run**. This creates a private `lamp_data` table with row-level security, so each person can only reach their own data. It doesn't change Weeklan's tables.
+1. Open Lamp's Supabase project, go to **SQL Editor**, paste **`docs/supabase.sql`** and click **Run**. This creates a private `lamp_data` table with row-level security, so each person can only reach their own data.
 2. That's it: `js/config.js` already points to the project. If email confirmation is on in Supabase, new users must confirm their email before they can sign in.
 
 ## Put it online (free)

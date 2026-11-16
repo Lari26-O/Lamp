@@ -27,7 +27,7 @@ Key: `lari:inbox:<app>`, for example `lari:inbox:weeklan`. It holds a list of it
 ```json
 [{ "id": "m3k2x", "from": "lamp", "created": "2026-11-15T20:00:00.000Z",
    "type": "task", "title": "Read John 4", "date": "2026-11-16", "minutes": 15,
-   "link": "https://<user>.github.io/Weeklan/lamp/#/read/42/4" }]
+   "link": "https://<user>.github.io/Lamp/#/read/42/4" }]
 ```
 
 In Settings → Connected apps, the button "Add tomorrow's reading to Weeklan" adds one of these items.
