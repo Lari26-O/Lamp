@@ -3,7 +3,7 @@ import { $, $$, esc, icon, toast } from '../util.js';
 import { t, LANG, LANGS, setLang, fmtDate } from '../i18n.js';
 import { getSettings, setSettings, getNotes, getMarks } from '../store.js';
 import { getProfile, setProfile, AGES, GOALS, L, ageById } from '../profile.js';
-import { cloudEnabled, getUser, signIn, signUp, signOut, pushNow, fetchCloud, applyCloud, resetPassword, lastSynced } from '../cloud.js';
+import { cloudEnabled, getUser, signIn, signUp, signOut, pushNow, fetchCloud, applyCloud, resetPassword, lastSynced, resendConfirm } from '../cloud.js';
 import { PLANS, planTitle } from '../plans-data.js';
 import { bookName } from '../bible.js';
 
@@ -51,7 +51,13 @@ export function authForm(box, { onDone, compact = false } = {}) {
           toast(t('acc.welcome', 'Signed in'));
         }
         onDone?.();
-      } catch (err) { $('#aMsg', box).textContent = err.message; btn.disabled = false; }
+      } catch (err) {
+        $('#aMsg', box).textContent = err.message; btn.disabled = false;
+        if (/confirm/i.test(err.message) && email) {
+          $('#aMsg', box).insertAdjacentHTML('beforeend', ` <button class="btn small ghost" type="button" id="aResend">${t('cloud.resend', 'Send the confirmation email again')}</button>`);
+          $('#aResend', box).addEventListener('click', async ev => { ev.target.disabled = true; try { await resendConfirm(email); $('#aMsg', box).textContent = t('cloud.resent', 'Sent! Check your email (and the spam folder).'); } catch (e2) { $('#aMsg', box).textContent = e2.message; } });
+        }
+      }
     });
   };
   draw();

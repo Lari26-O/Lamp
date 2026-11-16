@@ -29,18 +29,28 @@ const friendly = e => {
   if (/already registered|already exists/i.test(m)) return t('cloud.exists', 'This email already has an account. Sign in instead.');
   if (/password/i.test(m) && /6/.test(m)) return t('cloud.shortPass', 'The password must have at least 6 characters.');
   if (/relation .*lamp_data|does not exist|schema cache/i.test(m)) return t('cloud.noTable', 'Sync is not set up yet: the site owner needs to run docs/supabase.sql in Supabase.');
+  if (/rate limit|too many|security purposes|after \d+ seconds/i.test(m)) return t('cloud.rate', 'Too many tries for now. Supabase’s free email sender only sends a few emails per hour. Wait about an hour and try again, or ask the site owner to turn off email confirmation or connect an email service.');
+  if (/not confirmed/i.test(m)) return t('cloud.notConfirmed', 'Your email is not confirmed yet. Open the email from Supabase (check spam too) and tap the link, then sign in.');
+  if (/failed to fetch|network|load failed/i.test(m)) return t('cloud.network', 'Could not reach the account server. Check your internet connection and try again.');
+  if (/signups? not allowed|disabled/i.test(m)) return t('cloud.disabled', 'New accounts are turned off in Supabase (Authentication → Sign In / Providers → Email → Allow new users to sign up).');
+  if (/invalid.*email|email address .* is invalid/i.test(m)) return t('cloud.badEmail', 'That email address does not look right. Check it and try again.');
   if (/confirm/i.test(m)) return t('cloud.confirm', 'Check your email to confirm your account, then sign in.');
   return m || t('cloud.error', 'Something went wrong with your account.');
 };
 
 export async function signUp(email, password) {
   const c = await client();
-  const { data, error } = await c.auth.signUp({ email, password });
+  const { data, error } = await c.auth.signUp({ email, password, options: { emailRedirectTo: location.href.split('#')[0] } });
   if (error) throw new Error(friendly(error));
   cachedUser = data.user;
   if (!data.session) return { needsConfirm: true };
   await pushNow();
   return { user: data.user };
+}
+export async function resendConfirm(email) {
+  const c = await client();
+  const { error } = await c.auth.resend({ type: 'signup', email, options: { emailRedirectTo: location.href.split('#')[0] } });
+  if (error) throw new Error(friendly(error));
 }
 export async function signIn(email, password) {
   const c = await client();

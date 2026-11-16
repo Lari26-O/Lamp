@@ -1,5 +1,5 @@
 // Lamp service worker: offline cache, reminders (push + periodic sync), widgets.
-const VERSION = 'lamp-v19';
+const VERSION = 'lamp-v20';
 const SHELL = [
   './', 'index.html', 'css/styles.css', 'manifest.webmanifest', 'icons/icon.svg', 'icons/icon-192.png', 'icons/favicon-32.png',
   'js/app.js', 'js/util.js', 'js/store.js', 'js/bible.js', 'js/srs.js', 'js/ai.js', 'js/components.js', 'js/i18n.js', 'js/config.js', 'js/connect.js', 'js/learn-data.js',
