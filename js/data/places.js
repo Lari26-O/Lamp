@@ -1,3 +1,4 @@
+import { MORE_PLACES, MORE_JOURNEYS } from './more.js';
 // Biblical places. Coordinates are approximate; some sites (marked `uncertain`)
 // are traditional identifications that scholars still debate.
 // `names` are words searched for in chapter text to show "Places in this chapter".
@@ -68,6 +69,8 @@ export const PLACES = [
   { id: 'rome', name: 'Rome', lat: 41.893, lng: 12.483, names: ['Rome'], refs: ['Acts 28:14-31', 'Romans 1:7'], about: 'Capital of the empire. Paul lived here under house arrest, preaching freely.' },
 ];
 
+PLACES.push(...MORE_PLACES.map(({ tr, ...p }) => p));
+
 // Journeys draw a line on the map through a list of [lat, lng] points.
 const P = Object.fromEntries(PLACES.map(p => [p.id, [p.lat, p.lng]]));
 export const JOURNEYS = [
@@ -86,3 +89,4 @@ export const JOURNEYS = [
   { id: 'rome', name: 'Paul\'s voyage to Rome (c. AD 60)', color: '#555', ref: 'Acts 27:1-28:16', note: 'As a prisoner; shipwrecked on Malta.',
     path: [P.caesarea, P.sidon, [36.26, 29.98], P.crete, P.malta, [37.07, 15.29], [38.11, 15.65], [40.82, 14.12], P.rome] },
 ];
+JOURNEYS.push(...MORE_JOURNEYS.map(({ tr, places, ...j }) => ({ ...j, path: places.map(id => P[id]).filter(Boolean) })));

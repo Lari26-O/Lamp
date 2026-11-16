@@ -1,3 +1,4 @@
+import { MORE_TR } from './more.js';
 import { EVENTS } from './timeline.js';
 // Translations of places, timeline, people, eras and journeys.
 // Arrays: place [name, about] · event [title, about] · person [name, about] · era [name] · journey [name, note]
@@ -597,6 +598,7 @@ const RAW = {
 };
 
 const FIELDS = { place: ['name', 'about'], event: ['title', 'about'], person: ['name', 'about'], era: ['name'], journey: ['name', 'note'] };
+for (const [lang, kinds] of Object.entries(MORE_TR)) for (const [kind, items] of Object.entries(kinds)) Object.assign(RAW[lang][kind] ||= {}, items);
 export const L10N = {};
 for (const [lang, kinds] of Object.entries(RAW)) {
   L10N[lang] = {};

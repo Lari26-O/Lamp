@@ -18,7 +18,7 @@ export function render(el) {
       const r = parseRef(p.ref);
       return `<div class="card"><div class="row between"><h3 style="margin:0">${esc(personName(p))}</h3><span class="tag" style="background:none;border:1px solid ${era.color};color:var(--ink-2)">${esc(eraName(era.id))}</span></div>
         <p style="margin:8px 0">${esc(personAbout(p))}</p>
-        <div class="row"><a class="btn small" href="${refHash(r)}">${icon('book')} ${esc(localRef(p.ref))}</a><button class="btn small ghost" data-ai="${esc(p.name)}">${icon('spark')} ${t('people.story', 'Life story')}</button></div></div>`;
+        <div class="row">${r ? `<a class="btn small" href="${refHash(r)}">${icon('book')} ${esc(localRef(p.ref))}</a>` : ''}<button class="btn small ghost" data-ai="${esc(p.name)}">${icon('spark')} ${t('people.story', 'Life story')}</button></div></div>`;
     }).join('') || `<p class="empty">${t('people.none', 'No one found.')}</p>`;
   };
   draw();

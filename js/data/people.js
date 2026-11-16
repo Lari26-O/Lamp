@@ -1,3 +1,4 @@
+import { MORE_PEOPLE } from './more.js';
 // Key people of the Bible, used on the People page and in quizzes.
 export const PEOPLE = [
   { name: 'Adam & Eve', era: 'beginnings', ref: 'Genesis 2:7-25', about: 'The first man and woman, placed in the garden of Eden.' },
@@ -49,6 +50,8 @@ export const PEOPLE = [
 ];
 
 // Starter memory verses (text is loaded from the Bible data).
+PEOPLE.push(...MORE_PEOPLE.map(({ tr, ...x }) => x));
+
 export const STARTER_VERSES = ['John 3:16', 'Psalms 23:1', 'Proverbs 3:5-6', 'Philippians 4:13', 'Joshua 1:9', 'Romans 8:28'];
 
 // Verse of the day rotates through this list.

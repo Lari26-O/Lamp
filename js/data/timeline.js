@@ -1,3 +1,4 @@
+import { MORE_EVENTS } from './more.js';
 // Timeline of the Bible story. Dates before about 1000 BC are traditional
 // estimates and scholars disagree about many of them; `year` is only used for
 // ordering (negative = BC). Events without a reliable date get an order value.
@@ -88,3 +89,5 @@ export const EVENTS = [
   { id: 'templefalls', era: 'church', year: 70, date: 'AD 70', title: 'Rome destroys the temple', place: 'jerusalem', about: 'As Jesus foretold (Luke 21:5-6). (Historical context.)' },
   { id: 'revelation', era: 'church', year: 95, date: 'c. AD 95', title: 'John\'s Revelation', ref: 'Revelation 21:1-5', place: 'patmos', about: 'A vision of a new heaven and new earth: "Behold, I make all things new."' },
 ];
+EVENTS.push(...MORE_EVENTS.map(({ tr, ...e }) => e));
+EVENTS.sort((a, b) => a.year - b.year);
