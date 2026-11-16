@@ -838,3 +838,11 @@ body[data-view="widget"] main { margin: 0 auto; padding: 12px; max-width: 460px;
 .kid-recap .kid-scene, .kid-recap svg { display: block; width: 100%; height: auto; border-radius: 0; }
 .kid-reader .kid-text:not(.big) { font-size: clamp(1.1rem, 2.6vw, 1.45rem); line-height: 1.55; text-align: left; max-width: 46rem; margin-left: auto; margin-right: auto; }
 .where-form { display: grid; gap: 6px; margin-bottom: 14px; } .where-form .row { display: flex; gap: 6px; } .where-form .btn { flex: none; }
+
+.story-order { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 10px 0; }
+.so-card { position: relative; padding: 0; border: 4px solid #efe3ff; border-radius: 20px; overflow: hidden; background: #fff; cursor: pointer; box-shadow: 0 5px 0 #e4d6fb; }
+.so-card .kid-scene, .so-card svg { display: block; width: 100%; height: auto; border-radius: 0; }
+.so-card.right { border-color: #00b894; box-shadow: 0 5px 0 #00b894; }
+.so-card.wrong { animation: shake .35s; border-color: #ff7675; }
+.so-num { position: absolute; top: 8px; left: 8px; min-width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font: 800 1.4rem "Baloo 2", sans-serif; color: #fff; background: #00b894; }
+.so-num:empty { display: none; }

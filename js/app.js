@@ -4,7 +4,7 @@ import { getSettings, setSettings, streak } from './store.js';
 import { dueCount } from './srs.js';
 import { t, LANG, LANGS, setLang } from './i18n.js';
 import { publishSummary } from './connect.js';
-import { getProfile, isKids } from './profile.js';
+import { getProfile, isKids, currentAge } from './profile.js';
 import { install, canInstall, publishWidgetData } from './pwa.js';
 import { openDialog, shuffle } from './util.js';
 import { startAutoSync } from './cloud.js';
@@ -91,7 +91,9 @@ function buildChrome() {
   }
   $('#kidsBack').innerHTML = `${icon('sun')} <span>${t('gate.back', 'Kids mode')}</span>`;
   const due = dueCount();
-  const nav = NAV();
+  // Younger readers (4th–6th grade) get a simpler menu with only the parts made for them.
+  const SIMPLE = ['study', 'ask', 'notes', 'videos', 'search'];
+  const nav = NAV().filter(n => !(getProfile().age && currentAge().id === 'preteen' && SIMPLE.includes(n.id)));
   $('#sidenav').innerHTML = nav.map(n => n.group !== undefined
     ? (n.group ? `<div class="group">${esc(n.group)}</div>` : '<hr>')
     : `<a href="#/${n.id}" data-id="${n.id}">${icon(n.icon)}<span>${esc(n.label)}</span>${n.badge && due ? `<span class="badge" aria-label="${due}">${due}</span>` : ''}</a>`).join('')

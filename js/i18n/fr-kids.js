@@ -47,4 +47,5 @@ export default {
   "a11y.close": "Fermer", "kids.undo": "Annuler",
   "set.autoVoice": "Automatique (voix la plus naturelle)", "set.voiceTip": "Les voix viennent de votre appareil. Pour des voix plus naturelles sur iPhone et iPad, allez dans Réglages → Accessibilité → Contenu énoncé → Voix, et téléchargez une voix « Améliorée » ou « Premium ». Sur Windows, Microsoft Edge propose des voix naturelles en ligne.",
   "ob.learnPick": "Je choisirai un autre livre", "ob.learnPickSub": "Choisissez n’importe quel livre de la Bible à apprendre.", "ob.learnNone": "Pas de leçons pour l’instant, je vais juste explorer", "ob.learnNoneSub": "Lisez la Bible, prenez des notes et utilisez tout librement.", "ob.plansOptional": "Des plans de lecture qui pourraient vous plaire (facultatif, à démarrer quand vous voulez depuis Plans) :", "home.learnAny": "Apprendre un livre de la Bible", "home.learnAnySub": "Facultatif : de courtes leçons sur le livre de votre choix.",
+  "kids.storyOrder": "Qu’est-ce qui s’est passé en premier ? Touche les images dans le bon ordre !", "kids.storyGame": "Jeu de l’histoire", "kids.understood": "Tu te souviens de toute l’histoire !",
 };

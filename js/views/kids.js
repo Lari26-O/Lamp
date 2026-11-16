@@ -82,6 +82,7 @@ function story(el, id) {
     { kind: 'verse', text: L(s.verse.text), ref: s.verse.ref },
     { kind: 'talk', text: L(s.talk) },
     ...s.quiz.map(q => ({ kind: 'quiz', q })),
+    { kind: 'order' },
     { kind: 'end' },
   ];
   let i = 0;
@@ -98,6 +99,13 @@ function story(el, id) {
       speakText = L(step.q.q);
       body = `<p class="kid-text big" data-say="${esc(speakText)}">${esc(speakText)}</p><div class="kid-choices">${shuffle(step.q.opts).map(o => `<button class="kid-choice" data-o="${o}" aria-label="${esc(L(PIC_WORDS[o]))}">${pic(o)}<span>${esc(L(PIC_WORDS[o]))}</span></button>`).join('')}</div><p class="kid-feedback" id="fb" aria-live="polite"></p>`;
     }
+    if (step.kind === 'order') {
+      speakText = t('kids.storyOrder', 'What happened first? Tap the pictures in the right order!');
+      const picks = [1, 3, 6, 8];
+      body = `<p class="kid-label">${t('kids.storyGame', 'Story game')}</p><p class="kid-text big" data-say="${esc(speakText)}">${esc(speakText)}</p>
+        <div class="story-order">${shuffle(picks.map((n, k) => ({ n, k }))).map(x => `<button class="so-card" data-k="${x.k}">${scene(s.scene, x.n)}<span class="so-num"></span></button>`).join('')}</div>
+        <p class="kid-feedback" id="fb" aria-live="polite"></p>`;
+    }
     if (step.kind === 'end') {
       const st = kstate(); const first = !st.stories[s.id]; st.stories[s.id] = Date.now(); ksave(st);
       const newSticker = giveSticker('story-' + s.id);
@@ -111,7 +119,7 @@ function story(el, id) {
       <div class="kid-top"><a class="kid-round" href="#/kids" aria-label="${t('kids.home', 'Home')}">${icon('x')}</a>${dots}${speakText ? hear(speakText, 'lg') : '<span></span>'}</div>
       <h1 class="kid-story-title">${esc(L(s.title))}</h1>
       <div class="kid-page">${body}</div>
-      ${step.kind !== 'end' && step.kind !== 'quiz' ? `<div class="kid-nav">${i > 0 ? `<button class="kid-round big" id="prev" aria-label="${t('common.back', 'Back')}">${icon('chevL')}</button>` : '<span></span>'}<button class="kid-btn big" id="next">${t('kids.next', 'Next')} ${icon('chevR')}</button></div>` : ''}
+      ${step.kind !== 'end' && step.kind !== 'quiz' && step.kind !== 'order' ? `<div class="kid-nav">${i > 0 ? `<button class="kid-round big" id="prev" aria-label="${t('common.back', 'Back')}">${icon('chevL')}</button>` : '<span></span>'}<button class="kid-btn big" id="next">${t('kids.next', 'Next')} ${icon('chevR')}</button></div>` : ''}
     </div>`;
     $('#next', el)?.addEventListener('click', () => { i++; draw(); });
     $('#prev', el)?.addEventListener('click', () => { i--; draw(); });
@@ -126,6 +134,19 @@ function story(el, id) {
         setTimeout(() => { i++; draw(); }, 1700);
       } else { const msg = t('kids.tryAgain', 'Try again!'); $('#fb', el).textContent = msg; say(msg); }
     }));
+    if (step.kind === 'order') {
+      let want = 0;
+      $$('.so-card', el).forEach(btn => btn.addEventListener('click', () => {
+        if (btn.disabled) return;
+        if (+btn.dataset.k === want) {
+          btn.disabled = true; btn.classList.add('right'); btn.querySelector('.so-num').textContent = ++want;
+          if (want === 4) { const msg = cheer() + ' ' + t('kids.understood', 'You remember the whole story!'); $('#fb', el).textContent = msg; say(msg); confetti(el); markActivity('kidgame', 5); setTimeout(() => { i++; draw(); }, 2200); }
+        } else {
+          btn.classList.add('wrong'); setTimeout(() => btn.classList.remove('wrong'), 400);
+          const msg = t('kids.notYet', 'Not yet! What happened before?'); $('#fb', el).textContent = msg; say(msg);
+        }
+      }));
+    }
     if (speakText) auto(speakText);
   };
   draw();
