@@ -15,7 +15,7 @@ export const YOUVERSION_APP_KEY = '';
 export const SUITE_PREFIX = 'lari:';
 
 // Accounts & sync (Supabase): Lamp's own Supabase project.
-// so one account works in both apps. Lamp stores its data in its own table,
+// Lamp stores its data in its own table,
 // "lamp_data" — run docs/supabase.sql once in the Supabase SQL editor to create it.
 // The anon key is a public key (every Supabase website ships it);
 // row-level security keeps each person's data private.
