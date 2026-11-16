@@ -189,7 +189,8 @@ const OT_ORDER = ['creation', 'noah', 'abraham', 'joseph', 'babymoses', 'redsea'
 const all = [...BASE_STORIES, ...OT_STORIES.map(st => ({ ...st, scene: st.id }))].map(st => ({ ...st, pages: TALES[st.id]?.pages || st.pages, summary: TALES[st.id]?.summary, part: OT_ORDER.includes(st.id) ? 'ot' : 'nt' }));
 // A story appears once its pictures exist (painted or drawn) and its quiz pictures exist.
 const ok = st => hasArt(st.id) && hasPic(st.sticker) && st.quiz.every(q => q.opts.every(hasPic));
-export const STORIES = [...all.filter(st => st.part === 'nt'), ...OT_ORDER.map(id => all.find(st => st.id === id))].filter(ok);
+export const ALL_STORIES = [...all.filter(st => st.part === 'nt'), ...OT_ORDER.map(id => all.find(st => st.id === id))];
+export const STORIES = ALL_STORIES.filter(ok);
 
 // Words for the picture cards (said aloud in games).
 export const PIC_WORDS = {
