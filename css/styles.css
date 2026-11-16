@@ -837,3 +837,4 @@ body[data-view="widget"] main { margin: 0 auto; padding: 12px; max-width: 460px;
 .kid-recap span:nth-child(2) { transform: translateY(-6px) rotate(1.5deg); } .kid-recap span:first-child { transform: rotate(-1.5deg); }
 .kid-recap .kid-scene, .kid-recap svg { display: block; width: 100%; height: auto; border-radius: 0; }
 .kid-reader .kid-text:not(.big) { font-size: clamp(1.1rem, 2.6vw, 1.45rem); line-height: 1.55; text-align: left; max-width: 46rem; margin-left: auto; margin-right: auto; }
+.where-form { display: grid; gap: 6px; margin-bottom: 14px; } .where-form .row { display: flex; gap: 6px; } .where-form .btn { flex: none; }

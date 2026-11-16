@@ -1,6 +1,6 @@
 import { $, $$, esc, icon } from '../util.js';
 import { parseRef, refHash, localRef } from '../bible.js';
-import { t, tl } from '../i18n.js';
+import { t, tl, LANG } from '../i18n.js';
 import { evTitle } from '../learn-data.js';
 import { PLACES, JOURNEYS } from '../data/places.js';
 import { EVENTS } from '../data/timeline.js';
@@ -37,8 +37,13 @@ export async function render(el, { parts }) {
     <div class="page-head"><div><p class="eyebrow">${t('navg.explore', 'Explore')}</p><h1>${t('map.title', 'Bible maps')}</h1><p>${t('map.intro', 'Explore where the story happened. Tap a place to read its passages, or turn on a journey to trace the route.')}</p></div></div>
     <div class="map-wrap">
       <div><div id="map" role="application" aria-label="${t('map.title', 'Bible maps')}"></div>
-      <p class="muted small">© OpenStreetMap · ${t('map.note', 'Ancient locations are approximate; places marked “approx.” are debated.')}</p></div>
+      <p class="muted small">© OpenStreetMap · © CARTO · ${t('map.note', 'Ancient locations are approximate; places marked “approx.” are debated.')}</p></div>
       <div class="card place-list-wrap">
+        <form id="whereF" class="where-form" role="search">
+          <label for="whereQ"><b>${t('map.where', 'Where is…?')}</b></label>
+          <div class="row"><input class="input grow" id="whereQ" placeholder="${t('map.whereEx', 'Type a place, e.g. Bethlehem or Nineveh')}" autocomplete="off"><button class="btn primary" type="submit">${icon('search')}<span class="sr-only">${t('map.find', 'Find')}</span></button></div>
+          <p id="whereMsg" class="small muted" aria-live="polite"></p>
+        </form>
         <h3>${t('map.journeys', 'Journeys')}</h3>
         <div class="stack" id="journeys">${JOURNEYS.map(j => `<label class="switch" style="padding:4px 0"><span><span style="display:inline-block;width:14px;height:4px;background:${j.color};vertical-align:middle;margin-right:6px;border-radius:2px"></span>${esc(jName(j))}</span><input type="checkbox" data-j="${j.id}"></label>`).join('')}</div>
         <div id="jinfo" class="small" style="margin:8px 0" aria-live="polite"></div>
@@ -70,7 +75,8 @@ export async function render(el, { parts }) {
   if (!document.body.contains(el)) return;
 
   const map = L.map($('#map', el), { scrollWheelZoom: true, worldCopyJump: true }).setView([33.5, 35.5], 6);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, subdomains: 'abc', attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(map);
+  // CARTO Voyager tiles show place names in English/Latin letters instead of local scripts.
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 18, subdomains: 'abcd', attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>' }).addTo(map);
 
   const markers = {};
   for (const p of PLACES) {
@@ -98,6 +104,32 @@ export async function render(el, { parts }) {
     const p = PLACES.find(x => x.id === focus);
     map.setView([p.lat, p.lng], 9); markers[focus].openPopup();
   }
+  // "Where is…?" search: Bible places first, then any place in the world.
+  let found = null;
+  const norm = x => x.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+  $('#whereF', el).addEventListener('submit', async ev => {
+    ev.preventDefault();
+    const q = norm($('#whereQ', el).value); const msg = $('#whereMsg', el);
+    if (!q) return;
+    found?.remove(); found = null;
+    const hit = PLACES.find(p => norm(pName(p)) === q || norm(p.name) === q || (p.names || []).some(n => norm(n) === q))
+      || PLACES.find(p => norm(pName(p)).includes(q) || norm(p.name).includes(q) || (p.names || []).some(n => norm(n).includes(q)));
+    if (hit) {
+      map.setView([hit.lat, hit.lng], 9); markers[hit.id].openPopup();
+      msg.textContent = t('map.foundBible', '{place} is a Bible place. Here it is on the map!', { place: pName(hit) });
+      return;
+    }
+    msg.textContent = t('map.searching', 'Searching the world map…');
+    try {
+      const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&accept-language=${LANG}&q=${encodeURIComponent($('#whereQ', el).value)}`);
+      const [g] = await r.json();
+      if (!g) { msg.textContent = t('map.notFound', 'Sorry, that place was not found. Try another spelling.'); return; }
+      found = L.marker([+g.lat, +g.lon]).addTo(map).bindPopup(`<b>${esc(g.display_name)}</b><p class="small">${t('map.modern', 'This is where it is today.')}</p>`).openPopup();
+      map.setView([+g.lat, +g.lon], 8);
+      msg.textContent = t('map.foundWorld', 'Found it! This place is not in Lamp’s Bible places, but here is where it is.');
+    } catch { msg.textContent = t('map.offline', 'You need to be online to search the world map.'); }
+  });
+
   setTimeout(() => map.invalidateSize(), 100);
-  return () => map.remove();
+  return () => { found?.remove(); map.remove(); };
 }
