@@ -884,3 +884,8 @@ body[data-view="widget"] main { margin: 0 auto; padding: 12px; max-width: 460px;
 .moment-place .ico { width: 14px; height: 14px; }
 .moment p { margin: 6px 0 0; line-height: 1.45; }
 .moment-read { color: var(--ink-3); }
+
+/* grown-up choice after the kids gate */
+.gate-choices .choice { display: grid; grid-template-columns: auto 1fr; column-gap: 12px; text-align: left; }
+.gate-choices .choice svg { grid-row: span 2; align-self: center; }
+.gate-choices .choice span { grid-column: 2; }

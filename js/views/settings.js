@@ -55,6 +55,8 @@ export function render(el, { parts }) {
       <label class="field">${t('set.voice', 'Voice')}<select class="input" id="voice"><option value="">${t('set.autoVoice', 'Automatic (most natural voice)')}</option></select></label>
       <label class="field">${t('set.speed', 'Speed')}: <output id="rtOut">${s.ttsRate}×</output><input type="range" id="rt" min="0.5" max="1.8" step="0.1" value="${s.ttsRate}"></label>
       <button class="btn" id="ttsTest">${icon('speaker')} ${t('set.testVoice', 'Test voice')}</button>
+      <p class="field" style="margin:14px 0 6px">${t('set.kidsVoice', 'Voice in the children’s area')}</p>
+      <div class="chips"><button class="chip" data-kv="lamp" aria-pressed="${s.kidsVoice !== 'device'}">${t('set.kidsVoiceLamp', 'Lamp’s recorded voice')}</button><button class="chip" data-kv="device" aria-pressed="${s.kidsVoice === 'device'}">${t('set.kidsVoiceDevice', 'This device’s voice')}</button></div>
       <p class="muted small">${t('set.voiceTip', 'Voices come from your device. For the most natural voices on iPhone and iPad, go to Settings → Accessibility → Spoken Content → Voices, and download an “Enhanced” or “Premium” voice. On Windows, Microsoft Edge has natural online voices.')}</p>` : `<p class="muted">${t('read.noTTS', 'Read-aloud is not supported in this browser')}</p>`)}
 
     ${sect('remind', 'calendar', t('set.remind', 'Reminders & app'), `
@@ -144,6 +146,7 @@ export function render(el, { parts }) {
     };
     fill(); speechSynthesis.addEventListener?.('voiceschanged', fill);
     $('#voice', el).addEventListener('change', e => apply({ ttsVoice: e.target.value }));
+    $$('[data-kv]', el).forEach(b => b.addEventListener('click', () => { apply({ kidsVoice: b.dataset.kv }); $$('[data-kv]', el).forEach(x => x.setAttribute('aria-pressed', x === b)); toast(t('common.saved', 'Saved')); }));
     $('#rt', el).addEventListener('input', e => { apply({ ttsRate: +e.target.value }); $('#rtOut', el).textContent = e.target.value + '×'; });
     $('#ttsTest', el).addEventListener('click', () => { const st = getSettings(); speech.stop(); speech.speak(t('set.sample', 'Thy word is a lamp unto my feet, and a light unto my path.'), { rate: st.ttsRate, voice: st.ttsVoice, lang: LANG }); });
   }

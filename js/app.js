@@ -71,7 +71,13 @@ export function grownupGate() {
   if (!opts.includes(ans)) opts[0] = ans;
   const d = openDialog(t('gate.title', 'For grown-ups'), `<p>${t('gate.q', 'Ask a grown-up to answer:')}</p><p class="gate-q">${a} + ${b} = ?</p><div class="row center">${shuffle(opts).map(o => `<button class="btn big-num" data-n="${o}">${o}</button>`).join('')}</div><p class="small muted" id="gateMsg"></p>`);
   d.querySelectorAll('[data-n]').forEach(btn => btn.addEventListener('click', () => {
-    if (+btn.dataset.n === ans) { try { sessionStorage.setItem('lamp-grownup', '1'); } catch {} d.close(); buildChrome(); location.hash = '#/home'; }
+    if (+btn.dataset.n === ans) {
+      try { sessionStorage.setItem('lamp-grownup', '1'); } catch {}
+      d.close(); buildChrome();
+      // Let the grown-up choose: change the child's age / account, or open the grown-up area.
+      const c = openDialog(t('gate.title', 'For grown-ups'), `<div class="choice-list gate-choices"><button class="choice" data-go="#/account">${icon('user')}<b>${t('gate.account', 'Change age or account')}</b><span>${t('gate.accountSub', 'Pick a different age group, name or account')}</span></button><button class="choice" data-go="#/home">${icon('home')}<b>${t('gate.adult', 'Open the grown-up area')}</b><span>${t('gate.adultSub', 'Bible, plans and settings')}</span></button></div>`);
+      c.querySelectorAll('[data-go]').forEach(x => x.addEventListener('click', () => { c.close(); location.hash = x.dataset.go; }));
+    }
     else d.querySelector('#gateMsg').textContent = t('gate.no', 'That’s not right. Ask a grown-up!');
   }));
 }
@@ -194,6 +200,7 @@ function init() {
   });
   window.addEventListener('hashchange', route);
   window.addEventListener('lamp:nav', refreshNav);
+  window.addEventListener('lamp:age', () => { if (!isKids()) { try { sessionStorage.removeItem('lamp-grownup'); } catch {} } buildChrome(); });
   window.addEventListener('lamp:data', () => { $('#streakChip').innerHTML = `${icon('flame')}<span>${streak()}</span>`; });
   startAutoSync();
   window.addEventListener('lamp:streak', e => setTimeout(() => celebrate(e.detail, { kids: kidsOn(), speak: say }), 900));

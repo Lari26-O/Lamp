@@ -14,11 +14,12 @@ Nothing costs money and no API key is used.
 ## How it works
 - `tools/voice-phrases.mjs` collects every sentence the kids area says (stories, summaries,
   verses, questions, praise, instructions, challenges) into `tools/phrases/<lang>.txt`.
-- `tools/record_voices.py <lang>` records each sentence and each single word as small MP3 clips,
+- `tools/record_voices.py <lang>` records each whole sentence with the full Kokoro model as small MP3 clips (48 kbps),
   packed into `voice/<lang>/pack-N.json` with `voice/<lang>/manifest.json`. Re-running only
   records new sentences.
-- `js/voice-player.js` plays a recorded sentence. If a sentence was not recorded it is stitched
-  from recorded words, and if that is not possible the device's own voice is used.
+- `js/voice-player.js` plays the recorded sentences. If any sentence of a text was not recorded,
+  the whole text uses the device's own voice (speech stitched from single words sounded choppy).
+- Grown-ups can choose "Lamp's recorded voice" or "This device's voice" in Settings → Read aloud.
 - Sound only starts after a tap (iPhone and iPad require that). Every text in the kids area has
   a speaker button to hear it.
 

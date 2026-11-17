@@ -145,7 +145,7 @@ async function accountPage(el) {
     </section>
     <section class="card" id="accBox"><h2 class="card-title">${icon('globe')} ${t('acc.account', 'Account & sync')}</h2><div id="accInner"><span class="spinner"></span></div></section>`;
   $('#pName', el).addEventListener('change', e => { setProfile({ name: e.target.value.trim() }); toast(t('common.saved', 'Saved')); });
-  $$('[data-age]', el).forEach(b => b.addEventListener('click', () => { setProfile({ age: b.dataset.age }); $$('[data-age]', el).forEach(x => x.classList.toggle('on', x === b)); toast(t('common.saved', 'Saved')); }));
+  $$('[data-age]', el).forEach(b => b.addEventListener('click', () => { setProfile({ age: b.dataset.age }); window.dispatchEvent(new Event('lamp:age')); $$('[data-age]', el).forEach(x => x.classList.toggle('on', x === b)); toast(t('common.saved', 'Saved')); }));
   $$('[data-goal]', el).forEach(b => b.addEventListener('click', () => {
     const goals = new Set(getProfile().goals || []); goals.has(b.dataset.goal) ? goals.delete(b.dataset.goal) : goals.add(b.dataset.goal);
     setProfile({ goals: [...goals] }); b.setAttribute('aria-pressed', goals.has(b.dataset.goal));

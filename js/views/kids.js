@@ -23,6 +23,7 @@ export function say(text, opts = {}) {
   if (!text) return;
   const id = ++sayId;
   speech.stop(); VoicePlayer.stop();
+  if (getSettings().kidsVoice === 'device') { speakDevice(text, opts); return; }
   VoicePlayer.say(text, LANG, { onend: opts.onend }).then(ok => { if (!ok && id === sayId) speakDevice(text, opts); });
 }
 function speakDevice(text, opts) {

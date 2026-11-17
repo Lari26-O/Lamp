@@ -55,4 +55,6 @@ export default {
   "game.playAll": "Escuchar todo el versículo",
   "map.tapDots": "Toca los puntos numerados en el mapa para ver cuándo ocurrió cada parada y dónde leerla.",
   "map.moments": "Los grandes momentos",
+  "gate.account": "Cambiar la edad o la cuenta", "gate.accountSub": "Elegir otra edad, nombre o cuenta", "gate.adult": "Abrir el área de adultos", "gate.adultSub": "Biblia, planes y ajustes",
+  "set.kidsVoice": "Voz en el área de niños", "set.kidsVoiceLamp": "Voz grabada de Lamp", "set.kidsVoiceDevice": "Voz de este dispositivo"
 };
