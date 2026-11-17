@@ -4,6 +4,8 @@ import { t, tl, LANG } from '../i18n.js';
 import { evTitle } from '../learn-data.js';
 import { PLACES, JOURNEYS } from '../data/places.js';
 import { EVENTS } from '../data/timeline.js';
+import { STOPS } from '../data/journey-stops.js';
+import { localDate } from '../data/l10n.js';
 
 let leafletReady;
 function loadLeaflet() {
@@ -37,6 +39,7 @@ export async function render(el, { parts }) {
     <div class="page-head"><div><p class="eyebrow">${t('navg.explore', 'Explore')}</p><h1>${t('map.title', 'Bible maps')}</h1><p>${t('map.intro', 'Explore where the story happened. Tap a place to read its passages, or turn on a journey to trace the route.')}</p></div></div>
     <div class="map-wrap">
       <div><div id="map" role="application" aria-label="${t('map.title', 'Bible maps')}"></div>
+      <section id="stops" class="card stops" hidden aria-live="polite"></section>
       <p class="muted small">© Esri · © OpenStreetMap · ${t('map.note', 'Ancient locations are approximate; places marked “approx.” are debated.')}</p></div>
       <div class="card place-list-wrap">
         <form id="whereF" class="where-form" role="search">
@@ -94,8 +97,18 @@ export async function render(el, { parts }) {
       lines[j.id] = L.polyline(j.path, { color: j.color, weight: 4, opacity: 0.85, dashArray: j.id === 'exodus' ? '8 6' : null }).addTo(map);
       map.fitBounds(lines[j.id].getBounds(), { padding: [30, 30] });
       $('#jinfo', el).innerHTML = `<b>${esc(jName(j))}</b> — ${esc(jNote(j))} ${refLink(j.ref)}`;
-    } else { lines[j.id]?.remove(); delete lines[j.id]; }
+      showStops(j);
+    } else { lines[j.id]?.remove(); delete lines[j.id]; const open = JOURNEYS.find(x => lines[x.id]); if (open) showStops(open); else $('#stops', el).hidden = true; }
   }));
+  // List of stops (place, when, passage) for the chosen journey, under the map.
+  function showStops(j) {
+    const box = $('#stops', el); const stops = STOPS[j.id];
+    if (!stops) { box.hidden = true; return; }
+    box.hidden = false; box.style.setProperty('--jc', j.color);
+    box.innerHTML = `<h3>${esc(jName(j))}</h3><p class="small muted">${t('map.stopsHelp', 'Where they went, when, and where to read about it. Tap a place to see it on the map.')}</p>
+      <ol class="stop-list">${stops.map(([pid, when, ref], i) => { const pl = PLACES.find(x => x.id === pid); return `<li><button class="stop-place" data-stop="${pid}"><span class="stop-n">${i + 1}</span><b>${esc(pl ? pName(pl) : pid)}</b></button><span class="stop-when">${esc(localDate(when, LANG))}</span>${refLink(ref)}</li>`; }).join('')}</ol>`;
+    $$('[data-stop]', box).forEach(b => b.addEventListener('click', () => { const id = b.dataset.stop; const pl = PLACES.find(x => x.id === id); if (pl) { map.setView([pl.lat, pl.lng], 8); markers[id]?.openPopup(); $('#map', el).scrollIntoView({ behavior: 'smooth', block: 'center' }); } }));
+  }
   plist.addEventListener('click', ev => {
     const id = ev.target.closest('[data-p]')?.dataset.p; if (!id) return;
     history.replaceState(null, '', '#/map/' + id);
