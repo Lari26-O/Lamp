@@ -5,6 +5,7 @@ import { evTitle } from '../learn-data.js';
 import { PLACES, JOURNEYS } from '../data/places.js';
 import { EVENTS } from '../data/timeline.js';
 import { STOPS } from '../data/journey-stops.js';
+import { MOMENTS } from '../data/journey-moments.js';
 import { localDate } from '../data/l10n.js';
 
 let leafletReady;
@@ -98,6 +99,7 @@ export async function render(el, { parts }) {
       $('#jinfo', el).innerHTML = `<img class="journey-img" src="img/journeys/${j.id}.jpg" alt="" onerror="this.remove()"><b>${esc(jName(j))}</b> — ${esc(jNote(j))} ${refLink(j.ref)}`;
       showStops(j);
       $('#jinfo', el).insertAdjacentHTML('beforeend', `<p class="small muted" style="margin:6px 0 0">${t('map.tapDots', 'Tap the numbered dots on the map to see when each stop happened and where to read it.')}</p>`);
+      $('#jinfo', el).insertAdjacentHTML('beforeend', momentsHtml(j));
     } else { lines[j.id]?.remove(); delete lines[j.id]; hideStops(j.id); }
   }));
   // Numbered dots for each stop of a journey; tapping one shows when it happened and where to read it.
@@ -116,6 +118,23 @@ export async function render(el, { parts }) {
     });
     group.addTo(map); stopLayers[j.id] = group;
   }
+  // The biggest moments of the journey: what happened, where, and passages to read.
+  function momentsHtml(j) {
+    const list = MOMENTS[j.id]; if (!list) return '';
+    const pick = m => m[LANG] || m.en;
+    return `<section class="moments" style="--jc:${j.color}"><h3>${t('map.moments', 'Biggest moments')}</h3><ol>${list.map((m, i) => {
+      const pl = PLACES.find(x => x.id === m.p); const [title, text] = pick(m);
+      return `<li class="moment">${m.img ? `<img src="img/moments/${m.img}.jpg" alt="" loading="lazy" onerror="this.remove()">` : ''}<div class="moment-head"><span class="stop-n">${i + 1}</span><b>${esc(title)}</b></div>
+        ${pl ? `<button class="moment-place" data-mp="${pl.id}">${icon('map')} ${esc(pName(pl))}</button>` : ''}
+        <p>${esc(text)}</p><p class="moment-read"><b>${t('map.read', 'Read')}:</b> ${[m.r, ...(m.more || [])].map(refLink).join(' · ')}</p></li>`;
+    }).join('')}</ol></section>`;
+  }
+  $('#jinfo', el).addEventListener('click', ev => {
+    const id = ev.target.closest('[data-mp]')?.dataset.mp; if (!id) return;
+    const p = PLACES.find(x => x.id === id); if (!p) return;
+    map.setView([p.lat, p.lng], 9); markers[id]?.openPopup();
+    $('#map', el).scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
   function hideStops(id) { stopLayers[id]?.remove(); delete stopLayers[id]; }
   plist.addEventListener('click', ev => {
     const id = ev.target.closest('[data-p]')?.dataset.p; if (!id) return;

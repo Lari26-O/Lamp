@@ -1,4 +1,4 @@
-// Stops along each map journey: [place id, when, passage]. Shown as a list under the map.
+// Stops along each map journey: [place id, when, passage]. Shown as numbered dots on the map.
 // "when" uses the same format as the timeline (localized automatically).
 export const STOPS = {
   abraham: [['ur', 'c. 2100 BC', 'Genesis 11:27-31'], ['haran', 'c. 2091 BC', 'Genesis 12:1-5'], ['shechem', 'c. 2091 BC', 'Genesis 12:6-7'], ['bethel', 'c. 2091 BC', 'Genesis 12:8'], ['goshen', 'c. 2090 BC', 'Genesis 12:10-20'], ['hebron', 'c. 2085 BC', 'Genesis 13:14-18'], ['beersheba', 'c. 2066 BC', 'Genesis 21:22-34']],
@@ -16,4 +16,5 @@ export const STOPS = {
   exile: [['jerusalem', '586 BC', '2 Kings 25:1-12'], ['babylon', '586–539 BC', 'Psalms 137:1-6'], ['babylon', 'c. 539 BC', 'Daniel 5:25-31'], ['susa', 'c. 480 BC', 'Esther 2:5-8'], ['jerusalem', '538 BC', 'Ezra 1:1-5'], ['jerusalem', '516 BC', 'Ezra 6:13-18'], ['jerusalem', '445 BC', 'Nehemiah 2:11-18']],
   holyfamily: [['bethlehem', 'c. 5 BC', 'Matthew 2:1-12'], ['memphis', 'c. 4 BC', 'Matthew 2:13-15'], ['nazareth', 'c. 4 BC', 'Matthew 2:19-23'], ['jerusalem', 'c. AD 8', 'Luke 2:41-52']],
   philip: [['samaria', 'c. AD 34', 'Acts 8:5-13'], ['jerusalem', 'c. AD 34', 'Acts 8:14-25'], ['gaza', 'c. AD 34', 'Acts 8:26-39'], ['azotus', 'c. AD 34', 'Acts 8:40'], ['caesarea', 'c. AD 34–57', 'Acts 21:8-9']],
+  davidroute: [['bethlehem', 'c. 1025 BC', '1 Samuel 16:1-13'], ['elah', 'c. 1020 BC', '1 Samuel 17:1-54'], ['engedi', 'c. 1012 BC', '1 Samuel 24:1-22'], ['hebron', 'c. 1010 BC', '2 Samuel 2:1-4'], ['jerusalem', 'c. 1003 BC', '2 Samuel 5:1-10']],
 };

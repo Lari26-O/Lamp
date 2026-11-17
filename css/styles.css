@@ -872,3 +872,15 @@ body[data-view="widget"] main { margin: 0 auto; padding: 12px; max-width: 460px;
 .stop-pop .stop-n { width: 22px; height: 22px; border-radius: 50%; display: inline-grid; place-items: center; color: #fff; font-weight: 700; font-size: .75rem; }
 
 .journey-img { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 14px; margin-bottom: 8px; }
+
+.moments { margin-top: 14px; }
+.moments h3 { margin: 0 0 8px; font-size: 1.05rem; }
+.moments ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.moment { padding: 12px; border-radius: 14px; background: var(--surface-2); border-left: 4px solid var(--jc, var(--accent)); }
+.moment img { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 10px; margin-bottom: 8px; }
+.moment-head { display: flex; align-items: center; gap: 8px; font-size: 1rem; }
+.moment .stop-n { flex: none; width: 24px; height: 24px; border-radius: 50%; display: inline-grid; place-items: center; background: var(--jc, var(--accent)); color: #fff; font-weight: 700; font-size: .8rem; }
+.moment-place { display: inline-flex; align-items: center; gap: 4px; margin: 6px 0 0; padding: 3px 10px; border: 0; border-radius: 999px; background: var(--surface); color: var(--ink-2); font: inherit; font-size: .85rem; cursor: pointer; }
+.moment-place .ico { width: 14px; height: 14px; }
+.moment p { margin: 6px 0 0; line-height: 1.45; }
+.moment-read { color: var(--ink-3); }
