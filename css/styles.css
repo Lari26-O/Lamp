@@ -866,3 +866,9 @@ body[data-view="widget"] main { margin: 0 auto; padding: 12px; max-width: 460px;
 .search-card .seg .ico { width: 16px; height: 16px; }
 .idea-block .section-title { display: flex; align-items: center; gap: 8px; }
 .ai-more { margin-top: 18px; }
+
+.stop-dot span { display: grid; place-items: center; min-width: 30px; height: 30px; padding: 0 6px; border-radius: 15px; color: #fff; font: 700 .8rem/1 system-ui, sans-serif; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,.35); box-sizing: border-box; }
+.stop-pop { display: flex; align-items: center; gap: 6px; margin: 4px 0; flex-wrap: wrap; }
+.stop-pop .stop-n { width: 22px; height: 22px; border-radius: 50%; display: inline-grid; place-items: center; color: #fff; font-weight: 700; font-size: .75rem; }
+
+.journey-img { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 14px; margin-bottom: 8px; }

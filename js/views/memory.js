@@ -185,14 +185,16 @@ export function render(el, { parts, query }) {
     if (g.id === 'listen') {
       const chunks = phrases(c.text);
       let i = 0;
-      stage.innerHTML = `<p class="play-text serif" id="lt">${chunks.map((p, k) => `<span class="chunk" data-k="${k}">${esc(p)}</span>`).join(' ')}</p><div class="row center"><button class="btn primary" id="lp">${icon('play')} ${t('game.playPhrase', 'Play next phrase')}</button></div><p class="muted small center">${t('game.repeat', 'After each phrase, say it back out loud.')}</p>`;
+      stage.innerHTML = `<p class="play-text serif" id="lt">${chunks.map((p, k) => `<span class="chunk" data-k="${k}">${esc(p)}</span>`).join(' ')}</p><div class="row center"><button class="btn primary" id="lp">${icon('play')} ${t('game.playAll', 'Listen to the whole verse')}</button></div><p class="muted small center">${t('game.repeat', 'After each phrase, say it back out loud.')}</p>`;
       if (!speech.supported) stage.insertAdjacentHTML('beforeend', `<p class="muted small center">${t('read.noTTS', 'Read-aloud is not supported in this browser')}</p>`);
+      let playing = false;
       $('#lp', el).addEventListener('click', () => {
-        $$('.chunk', stage).forEach(x => x.classList.toggle('on', +x.dataset.k === i));
-        const s = getSettings();
-        speech.stop(); speech.speak(chunks[i], { rate: s.ttsRate * 0.9, voice: s.ttsVoice, lang: getVersion(c.translation).lang });
-        i++; setP(i / chunks.length);
-        if (i >= chunks.length) { $('#lp', el).disabled = true; setTimeout(() => finish(1), 600); }
+        if (playing) return; playing = true;
+        const s2 = getSettings();
+        speech.stop();
+        speech.speak(c.text, { parts: chunks, rate: s2.ttsRate * 0.95, voice: s2.ttsVoice, lang: getVersion(c.translation).lang,
+          onpart: k => { $$('.chunk', el).forEach((x, j) => x.classList.toggle('on', j === k)); setP((k + 1) / chunks.length); },
+          onend: () => { playing = false; $$('.chunk', el).forEach(x => x.classList.remove('on')); setTimeout(() => finish(1), 600); } });
       });
       stopFns.push(() => speech.stop());
     }

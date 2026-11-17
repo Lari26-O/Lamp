@@ -165,21 +165,27 @@ export const speech = {
   supported: 'speechSynthesis' in window,
   voices() { return this.supported ? speechSynthesis.getVoices() : []; },
   stop() { speakToken++; if (this.supported) speechSynthesis.cancel(); },
-  speak(text, { rate = 1, voice = '', lang = 'en', pitch = 1, onend, onstart } = {}) {
+  // Speaks sentence by sentence, starting each one only when the previous one ends
+  // (iPhone/iPad drop queued sentences otherwise). onpart(i) fires as each part starts.
+  speak(text, { rate = 1, voice = '', lang = 'en', pitch = 1, onend, onstart, onpart, parts: given } = {}) {
     if (!this.supported) return null;
     const chosen = this.voices().find(x => x.voiceURI === voice && x.lang.toLowerCase().startsWith(lang.slice(0, 2).toLowerCase()));
     const v = chosen || bestVoice(lang);
-    const parts = sentences(text);
+    const parts = given || sentences(text);
     const token = ++speakToken;
-    let first = null;
-    parts.forEach((part, i) => {
-      const u = new SpeechSynthesisUtterance(part);
-      u.rate = rate * 0.96; u.pitch = pitch;
+    const say = i => {
+      if (token !== speakToken) return;
+      if (i >= parts.length) { onend?.(); return; }
+      const u = new SpeechSynthesisUtterance(parts[i]);
+      u.rate = rate; u.pitch = pitch;
       if (v) { u.voice = v; u.lang = v.lang; } else u.lang = lang;
-      if (i === 0) { u.onstart = onstart; first = u; }
-      if (i === parts.length - 1) { u.onend = () => { if (token === speakToken) onend?.(); }; u.onerror = u.onend; }
+      u.onstart = () => { if (i === 0) onstart?.(); onpart?.(i); };
+      u.onend = () => setTimeout(() => say(i + 1), 120);
+      u.onerror = e => { if (e.error === 'interrupted' || e.error === 'canceled') return; setTimeout(() => say(i + 1), 120); };
       speechSynthesis.speak(u);
-    });
-    return first;
+    };
+    // Give a just-cancelled speech engine a moment (Safari ignores speak() right after cancel()).
+    setTimeout(() => say(0), speechSynthesis.speaking || speechSynthesis.pending ? 150 : 0);
+    return true;
   },
 };

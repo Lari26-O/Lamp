@@ -1,0 +1,1 @@
+Journey pictures go here, named after the journey: abraham.jpg, exodus.jpg, jesus.jpg, paul1.jpg, paul2.jpg, paul3.jpg, rome.jpg, jacob.jpg, josephroute.jpg, ruthroute.jpg, elijahroute.jpg, jonahroute.jpg, exile.jpg, holyfamily.jpg, philip.jpg

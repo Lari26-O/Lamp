@@ -35,7 +35,7 @@ export function say(text, opts = {}) {
 function speakDevice(text, opts) {
   if (!speech.supported) return;
   const s = getSettings();
-  speech.speak(text, { rate: (s.ttsRate || 1) * 0.92, pitch: 1.06, voice: s.ttsVoice, lang: LANG, ...opts });
+  speech.speak(text, { rate: (s.ttsRate || 1) * 0.95, voice: s.ttsVoice, lang: LANG, ...opts });
 }
 export const stopSay = () => { speech.stop(); if (player) { player.pause(); player = null; } };
 const hear = (text, cls = '') => `<button class="kid-hear ${cls}" data-say="${esc(text)}" aria-label="${t('kids.hear', 'Hear it')}">${icon('speaker')}</button>`;
