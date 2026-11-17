@@ -1,9 +1,9 @@
 // Lamp service worker: offline cache, reminders (push + periodic sync), widgets.
-const VERSION = 'lamp-v25';
+const VERSION = 'lamp-v26';
 const SHELL = [
   './', 'index.html', 'css/styles.css', 'manifest.webmanifest', 'icons/icon.svg', 'icons/icon-192.png', 'icons/favicon-32.png',
   'js/app.js', 'js/util.js', 'js/store.js', 'js/bible.js', 'js/srs.js', 'js/ai.js', 'js/components.js', 'js/i18n.js', 'js/config.js', 'js/connect.js', 'js/learn-data.js',
-  'js/i18n/fr.js', 'js/i18n/pt.js', 'js/i18n/es.js', 'js/i18n/fr-more.js', 'js/i18n/pt-more.js', 'js/i18n/es-more.js', 'js/i18n/fr-kids.js', 'js/i18n/pt-kids.js', 'js/i18n/es-kids.js', 'js/data/l10n.js', 'js/data/more.js', 'js/data/verses365.js', 'js/data/daily-plans.js', 'js/data/more-challenges.js', 'js/data/ideas.js', 'js/data/journey-stops.js',
+  'js/i18n/fr.js', 'js/i18n/pt.js', 'js/i18n/es.js', 'js/i18n/fr-more.js', 'js/i18n/pt-more.js', 'js/i18n/es-more.js', 'js/i18n/fr-kids.js', 'js/i18n/pt-kids.js', 'js/i18n/es-kids.js', 'js/data/l10n.js', 'js/data/more.js', 'js/data/verses365.js', 'js/data/daily-plans.js', 'js/data/more-challenges.js', 'js/data/ideas.js', 'js/data/journey-stops.js', 'js/data/journey-moments.js', 'js/voice-player.js',
   'js/data/books.js', 'js/data/places.js', 'js/data/timeline.js', 'js/data/people.js', 'js/data/trivia.js',
   'js/profile.js', 'js/cloud.js', 'js/plans-data.js', 'js/learn-books.js', 'js/challenges.js', 'js/streaks.js', 'js/pwa.js', 'js/kids-art.js', 'js/kids-data.js', 'js/kids-stories-ot.js', 'js/kids-tales-1.js', 'js/kids-tales-2.js', 'js/kids-tales-3.js', 'js/kids-tales-4.js', 'js/kids-tales-5.js', 'js/kids-more-1.js', 'js/kids-more-2.js', 'js/kids-more-3.js', 'js/kids-more-4.js', 'js/kids-more-5.js', 'js/kids-art-flat.js',
   'js/views/home.js', 'js/views/reader.js', 'js/views/search.js', 'js/views/ask.js', 'js/views/memory.js', 'js/views/quiz.js', 'js/views/notes.js', 'js/views/map.js',
@@ -30,7 +30,7 @@ self.addEventListener('fetch', e => {
   const fonts = url.host === 'fonts.googleapis.com' || url.host === 'fonts.gstatic.com';
   const bibleApi = url.host === 'bible-api.com';
   if (!sameOrigin && !fonts && !bibleApi) return;
-  if ((sameOrigin && (url.pathname.includes('/data/') || url.pathname.includes('/img/kids/'))) || fonts) {
+  if ((sameOrigin && (url.pathname.includes('/data/') || url.pathname.includes('/img/kids/') || /\/voice\/\w+\/pack-/.test(url.pathname))) || fonts) {
     e.respondWith(caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
       if (res.ok || res.type === 'opaque') { const copy = res.clone(); caches.open(VERSION).then(c => c.put(e.request, copy)); }
       return res;

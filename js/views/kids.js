@@ -9,35 +9,28 @@ import { scene, pic, PIC_IDS, colorSrc, realSrc, cover } from '../kids-art.js';
 import { todayChallenge, challengeText, isDone, completeChallenge } from '../challenges.js';
 import { t, LANG } from '../i18n.js';
 import { kidsStreak } from '../streaks.js';
+import * as VoicePlayer from '../voice-player.js';
 
 const kstate = () => ({ stories: {}, stickers: {}, ...load('kids', {}) });
 const ksave = s => { save('kids', s); window.dispatchEvent(new Event('lamp:data')); };
 const giveSticker = key => { const s = kstate(); if (!s.stickers[key]) { s.stickers[key] = Date.now(); ksave(s); return true; } return false; };
 
 // ---- voice ----
-// Recorded storyteller voice (made with tools/make-voice.py) when available,
-// otherwise the most natural voice on the device.
-const fnv = str => { let h = 0x811c9dc5; for (const ch of new TextEncoder().encode(str)) { h ^= ch; h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); };
-let VOICES = new Set(), player = null;
-fetch('audio/kids/index.json').then(r => r.ok ? r.json() : { files: [] }).then(d => { VOICES = new Set(d.files || []); }).catch(() => {});
+// Free recorded storyteller voice (Kokoro clips from tools/record_voices.py, played by
+// js/voice-player.js); if a sentence can't be played that way, the device's own voice.
+let sayId = 0;
 export function say(text, opts = {}) {
   if (!text) return;
-  speech.stop(); if (player) { player.pause(); player = null; }
-  const key = fnv(`${LANG}|${String(text).trim()}`);
-  if (VOICES.has(key)) {
-    player = new Audio(`audio/kids/${LANG}/${key}.mp3`);
-    player.onended = () => opts.onend?.();
-    player.play().catch(() => { player = null; speakDevice(text, opts); });
-    return;
-  }
-  speakDevice(text, opts);
+  const id = ++sayId;
+  speech.stop(); VoicePlayer.stop();
+  VoicePlayer.say(text, LANG, { onend: opts.onend }).then(ok => { if (!ok && id === sayId) speakDevice(text, opts); });
 }
 function speakDevice(text, opts) {
   if (!speech.supported) return;
   const s = getSettings();
   speech.speak(text, { rate: (s.ttsRate || 1) * 0.95, voice: s.ttsVoice, lang: LANG, ...opts });
 }
-export const stopSay = () => { speech.stop(); if (player) { player.pause(); player = null; } };
+export const stopSay = () => { sayId++; speech.stop(); VoicePlayer.stop(); };
 const hear = (text, cls = '') => `<button class="kid-hear ${cls}" data-say="${esc(text)}" aria-label="${t('kids.hear', 'Hear it')}">${icon('speaker')}</button>`;
 const auto = text => { if (isPreReader()) setTimeout(() => say(text), 350); };
 const cheer = () => { const c = t('kids.cheers', 'Great job!|Yes! Well done!|Awesome!|You did it!|Super!').split('|'); return c[Math.floor(Math.random() * c.length)]; };
