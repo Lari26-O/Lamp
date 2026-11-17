@@ -2,7 +2,7 @@
 import { $, $$, esc, icon, toast } from '../util.js';
 import { load, save, markActivity, today } from '../store.js';
 import { parseRef, refHash, localRef } from '../bible.js';
-import { PLANS, PLAN_CATS, PROMPTS, planTitle, planDesc } from '../plans-data.js';
+import { PLANS, PLAN_CATS, PROMPTS, planTitle, planDesc, findPlan, allKnownPlans, dailyPlan, seasonalPlans, seasonName } from '../plans-data.js';
 import { L, currentAge, getProfile } from '../profile.js';
 import { runAI } from '../components.js';
 import { sendTo } from '../connect.js';
@@ -22,7 +22,7 @@ export function planInfo(p, st = planState().active[p.id]) {
 export function startPlan(id) { const s = planState(); s.active[id] = { start: Date.now(), done: {}, read: {}, notes: {} }; setState(s); }
 export function markReading(id, day, i) {
   const s = planState(); const st = s.active[id]; if (!st) return;
-  const p = PLANS.find(x => x.id === id);
+  const p = findPlan(id);
   st.read = st.read || {}; st.read[`${day}:${i}`] = Date.now();
   if (p.days[day].every((_, k) => st.read[`${day}:${k}`]) && !st.done[day]) { st.done[day] = Date.now(); markActivity('plan', 10); toast(t('plans.dayDone', 'Day {n} complete', { n: day + 1 })); }
   if (Object.keys(st.done).length >= p.days.length && !s.finished.includes(id)) { s.finished.push(id); toast(t('plans.finished', 'Plan finished — well done!')); }
@@ -44,7 +44,7 @@ function planCard(p) {
 
 function discover(el) {
   const st = planState();
-  const active = PLANS.filter(p => st.active[p.id] && !planInfo(p).finished);
+  const active = allKnownPlans(Object.keys(st.active)).filter(p => !planInfo(p).finished);
   const age = currentAge();
   let cat = 'foryou';
   const draw = () => {
@@ -58,17 +58,21 @@ function discover(el) {
           <div class="progress"><i style="width:${info.pct * 100}%"></i></div>
           ${info.behind > 1 ? `<p class="small warn">${t('plans.behind', '{n} days behind — no pressure, just pick up where you left off.', { n: info.behind - 1 })}</p>` : ''}</div>${icon('chevR')}</a>`;
       }).join('')}</div>` : ''}
+      ${(() => { const dp = dailyPlan(); const dinfo = planInfo(dp); return `<h2 class="section-title">${t('plans.ofDay', 'Plan of the day')}</h2>
+      <a class="card daily-plan" href="#/plans/${dp.id}" style="--pc:${dp.color}"><span class="plan-art sm">${icon(dp.icon)}</span><div class="grow"><b>${esc(planTitle(dp))}</b><p class="small muted">${dp.days[0].map(localRef).join(' · ')}</p><p class="small">${dinfo?.finished ? t('plans.dailyDone', 'Done for today — come back tomorrow for a new one!') : t('plans.dailySub', 'Optional · a new one every day')}</p></div>${icon(dinfo?.finished ? 'check' : 'chevR')}</a>`; })()}
+      <h2 class="section-title">${t('plans.season', 'This season: {s}', { s: seasonName() })}</h2>
+      <div class="plan-grid">${seasonalPlans().map(planCard).join('')}</div>
       <h2 class="section-title">${t('plans.discover', 'Find a plan')}</h2>
       <div class="chips" role="group" style="margin-bottom:14px">${PLAN_CATS.map(c => `<button class="chip" data-cat="${c.id}" aria-pressed="${c.id === cat}">${esc(L(c.name))}</button>`).join('')}</div>
       <div class="plan-grid">${list.map(planCard).join('')}</div>
-      ${st.finished.length ? `<h2 class="section-title">${t('plans.done', 'Completed')}</h2><div class="plan-grid">${st.finished.map(id => PLANS.find(p => p.id === id)).filter(Boolean).map(planCard).join('')}</div>` : ''}`;
+      ${st.finished.length ? `<h2 class="section-title">${t('plans.done', 'Completed')}</h2><div class="plan-grid">${allKnownPlans(st.finished).filter(p => !p.daily).map(planCard).join('')}</div>` : ''}`;
     $$('[data-cat]', el).forEach(b => b.addEventListener('click', () => { cat = b.dataset.cat; draw(); }));
   };
   draw();
 }
 
 function detail(el, id, dayParam) {
-  const p = PLANS.find(x => x.id === id);
+  const p = findPlan(id);
   if (!p) { location.hash = '#/plans'; return; }
   const draw = () => {
     const s = planState(); const st = s.active[id]; const info = planInfo(p, st);

@@ -2,6 +2,7 @@
 // topical plans list passages per day. Titles are in four languages.
 import { BOOKS } from './data/books.js';
 import { L } from './profile.js';
+import { DAILY_THEMES, SEASONAL_PLANS, seasonOf, SEASON_NAMES } from './data/daily-plans.js';
 
 function seq(from, to, days) {
   const chs = [];
@@ -92,3 +93,31 @@ export const PROMPTS = [
   { en: 'Turn what you read into a short prayer.', fr: 'Transformez votre lecture en une courte prière.', pt: 'Transforme o que você leu numa oração curta.', es: 'Convierte lo que leíste en una oración corta.' },
   { en: 'Who could you share this with this week?', fr: 'Avec qui pourriez-vous partager cela cette semaine ?', pt: 'Com quem você poderia compartilhar isso esta semana?', es: '¿Con quién podrías compartir esto esta semana?' },
 ];
+
+// ---- Plan of the day (new every day) and seasonal plans ----
+const dayNum = d => Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5);
+const ymd = d => `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
+const DAILY_COLORS = ['#c0392b', '#2f8f4e', '#1f6f8b', '#7a4fb3', '#d4a017', '#b4582a', '#a83279', '#0fb9b1'];
+const PREFIX = { en: 'Today:', fr: 'Aujourd’hui :', pt: 'Hoje:', es: 'Hoy:' };
+export function dailyPlan(date = new Date()) {
+  const n = dayNum(date), len = DAILY_THEMES.length;
+  const th = DAILY_THEMES[(n * 17) % len];                    // a different theme each day
+  const off = Math.floor(n / len) % th.refs.length;            // different readings when a theme comes back
+  const refs = [0, 1, 2].map(k => th.refs[(off + k * 2) % th.refs.length]);
+  return {
+    id: 'daily-' + ymd(date), cat: 'daily', daily: true, icon: th.icon, color: DAILY_COLORS[n % DAILY_COLORS.length],
+    title: Object.fromEntries(Object.keys(th.title).map(l => [l, `${PREFIX[l]} ${th.title[l]}`])),
+    desc: { en: 'A one-day plan, new every day. Three short readings on today’s theme.', fr: 'Un plan d’un jour, nouveau chaque jour. Trois courtes lectures sur le thème du jour.', pt: 'Um plano de um dia, novo todos os dias. Três leituras curtas sobre o tema de hoje.', es: 'Un plan de un día, nuevo cada día. Tres lecturas cortas sobre el tema de hoy.' },
+    days: [refs],
+  };
+}
+export const seasonalPlans = (date = new Date()) => SEASONAL_PLANS.filter(p => p.season === seasonOf(date));
+export const seasonName = (date = new Date()) => L(SEASON_NAMES[seasonOf(date)]);
+export function findPlan(id) {
+  if (!id) return null;
+  const hit = PLANS.find(p => p.id === id) || SEASONAL_PLANS.find(p => p.id === id);
+  if (hit) return hit;
+  const m = /^daily-(\d{4})(\d{2})(\d{2})$/.exec(id);
+  return m ? dailyPlan(new Date(+m[1], +m[2] - 1, +m[3])) : null;
+}
+export const allKnownPlans = ids => ids.map(findPlan).filter(Boolean);

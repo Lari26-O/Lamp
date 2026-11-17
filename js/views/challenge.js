@@ -16,7 +16,7 @@ export function render(el) {
           ${done ? `<p class="ch-done">${icon('check')} ${t('ch.done', 'Done! +10 XP')}</p>` : `<button class="btn primary" id="did">${icon('check')} ${t('ch.didIt', 'I did it')}</button>`}
           ${ch.link && !done ? `<a class="btn" href="${ch.link}">${icon('play')} ${t('ch.go', 'Do it now')}</a>` : ''}
         </div>
-        ${ch.kind === 'app' && !done ? `<p class="small muted">${t('ch.auto', 'This one completes by itself when you do it in the app.')}</p>` : ''}
+        ${ch.kind === 'app' && ch.check && !done ? `<p class="small muted">${t('ch.auto', 'This one completes by itself when you do it in the app.')}</p>` : ''}
       </section>
       <div class="card"><div class="row between"><b>${t('ch.streak', 'Challenge streak')}</b><span class="tag">${icon('flame')} ${challengeStreak()}</span></div>
         <div class="ch-week">${challengeHistory(7).map(d => `<span class="${d.done ? 'on' : ''}" title="${d.date}">${d.done ? icon('check') : ''}</span>`).join('')}</div>

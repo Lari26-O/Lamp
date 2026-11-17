@@ -6,7 +6,7 @@ import { PLACES } from '../data/places.js';
 import { EVENTS, ERAS } from '../data/timeline.js';
 import { aiMethods, runAI, videoPanel, tabs } from '../components.js';
 import { t, tl, LANG, LANGS, langName } from '../i18n.js';
-import { PLANS, planTitle } from '../plans-data.js';
+import { PLANS, planTitle, findPlan, allKnownPlans, dailyPlan } from '../plans-data.js';
 import { markReading } from './plans.js';
 import { verseImage } from '../components.js';
 
@@ -56,7 +56,7 @@ function versionOptions(selected) {
 }
 
 async function chapterView(el, b, c, focusV, query = new URLSearchParams()) {
-  const plan = PLANS.find(x => x.id === query.get('plan'));
+  const plan = findPlan(query.get('plan'));
   const planDay = +query.get('day') || 0, planI = +query.get('i') || 0;
   const s = getSettings();
   const name = bookName(b);

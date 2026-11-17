@@ -2,10 +2,10 @@ import { $, icon, esc, dayOfYear, toast } from '../util.js';
 import { parseRef, passageText, refHash, localRef, currentVersion, getVersion, bookName } from '../bible.js';
 import { getProgress, streak, getNotes, getMarks, todayXP, getSettings, levelInfo } from '../store.js';
 import { dueCount, getCards, addCard, level } from '../srs.js';
-import { DAILY_VERSES } from '../data/people.js';
+import { VERSES_365 } from '../data/verses365.js';
 import { load } from '../store.js';
 import { getProfile, currentAge, L } from '../profile.js';
-import { PLANS, planTitle } from '../plans-data.js';
+import { PLANS, planTitle, findPlan, allKnownPlans, dailyPlan } from '../plans-data.js';
 import { planState, planInfo } from './plans.js';
 import { todayChallenge, challengeText, isDone } from '../challenges.js';
 import { canInstall, install } from '../pwa.js';
@@ -15,7 +15,7 @@ import { streakCard } from '../streaks.js';
 
 export async function render(el) {
   const p = getProgress();
-  const ref = DAILY_VERSES[dayOfYear() % DAILY_VERSES.length];
+  const ref = VERSES_365[dayOfYear() % VERSES_365.length];
   const r = parseRef(ref);
   const cards = getCards();
   const due = dueCount();
@@ -27,7 +27,7 @@ export async function render(el) {
   const learnBook = prof.learnBook ?? age.book;
   const bp = (load('learn', {}).books || {})[learnBook];
   const ps = planState();
-  const activePlans = PLANS.filter(pl => ps.active[pl.id] && !planInfo(pl).finished);
+  const activePlans = allKnownPlans(Object.keys(ps.active)).filter(pl => !planInfo(pl).finished && !pl.daily);
   const suggest = PLANS.find(pl => pl.id === age.plans[0]);
   const lv = levelInfo(p.xp || 0);
   const vid = currentVersion();
@@ -58,6 +58,7 @@ export async function render(el) {
     ${(() => { const ch = todayChallenge(); const dn = isDone(ch); return `<a class="card challenge-strip ${dn ? 'done' : ''}" href="#/challenge"><span class="ch-ico sm">${icon(dn ? 'check' : ch.icon)}</span><div class="grow"><p class="eyebrow">${t('ch.title', 'Daily challenge')}</p><b>${esc(challengeText(ch))}</b></div>${icon('chevR')}</a>`; })()}
     <div class="grid">
       ${activePlans.map(pl => { const info = planInfo(pl); return `<a class="card tile accent" href="#/plans/${pl.id}"><span class="ico-wrap">${icon('calendar')}</span><div><b>${esc(planTitle(pl))}</b><p>${t('plans.dayOf', 'Day {n} of {t}', { n: info.next + 1, t: pl.days.length })} · ${pl.days[info.next].map(localRef).join(', ')}</p></div></a>`; }).join('')}
+      ${(() => { const dp = dailyPlan(); const di = planInfo(dp); return di?.finished ? '' : `<a class="card tile" href="#/plans/${dp.id}"><span class="ico-wrap">${icon(dp.icon)}</span><div><b>${t('plans.ofDay', 'Plan of the day')}</b><p>${esc(planTitle(dp))} · ${dp.days[0].length} ${t('plans.readings', 'readings')}</p></div></a>`; })()}
       ${!activePlans.length && suggest ? `<a class="card tile accent" href="#/plans/${suggest.id}"><span class="ico-wrap">${icon('calendar')}</span><div><b>${t('home.startPlan', 'Start a reading plan')}</b><p>${esc(planTitle(suggest))} · ${t('plans.days', '{n} days', { n: suggest.days.length })}</p></div></a>` : ''}
       ${learnBook >= 0 ? `<a class="card tile" href="#/learn"><span class="ico-wrap">${icon('path')}</span><div><b>${t('home.lesson', 'Continue learning')}</b><p>${t('lp.learnBook', 'Learn {book}', { book: esc(bookName(learnBook)) })}${bp?.total ? ` · ${Math.round(bp.done / bp.total * 100)}%` : ''}</p></div></a>` : `<a class="card tile" href="#/learn/books"><span class="ico-wrap">${icon('path')}</span><div><b>${t('home.learnAny', 'Learn a book of the Bible')}</b><p>${t('home.learnAnySub', 'Optional: short lessons on any book you choose.')}</p></div></a>`}
       ${last ? `<a class="card tile" href="#/read/${last.b}/${last.c}"><span class="ico-wrap">${icon('book')}</span><div><b>${t('home.keepReading', 'Keep reading')}</b><p>${esc(bookName(last.b))} ${last.c} · ${esc(getVersion(vid).abbr)}</p></div></a>`

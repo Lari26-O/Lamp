@@ -3,6 +3,7 @@
 import { load, save, getProgress, markActivity, today } from './store.js';
 import { isKids, L } from './profile.js';
 import { dayOfYear } from './util.js';
+import { MORE_CHALLENGES, MORE_KIDS_CHALLENGES } from './data/more-challenges.js';
 
 const S = (en, fr, pt, es) => ({ en, fr, pt, es });
 const C = (id, kind, icon, text, check, link) => ({ id, kind, icon, text, check, link });
@@ -27,7 +28,7 @@ export const CHALLENGES = [
   C('share', 'life', 'share', S('Share a Bible verse with someone today (make a verse image!).', 'Partagez un verset avec quelqu’un aujourd’hui (créez une image de verset !).', 'Compartilhe um versículo com alguém hoje (faça uma imagem de versículo!).', 'Comparte un versículo con alguien hoy (¡haz una imagen del versículo!).')),
   C('listen', 'life', 'people', S('Really listen to someone today — ask how they are and wait for the answer.', 'Écoutez vraiment quelqu’un aujourd’hui — demandez-lui comment il va et attendez la réponse.', 'Escute alguém de verdade hoje — pergunte como está e espere a resposta.', 'Escucha de verdad a alguien hoy — pregúntale cómo está y espera la respuesta.')),
   C('psalm', 'life', 'heart', S('Read a psalm out loud as a prayer.', 'Lisez un psaume à voix haute comme une prière.', 'Leia um salmo em voz alta como oração.', 'Lee un salmo en voz alta como oración.'), null, '#/read/18/23'),
-  C('invite', 'life', 'house', S('Invite someone to church or to a meal.', 'Invitez quelqu’un à l’église ou à un repas.', 'Convide alguém para a igreja ou para uma refeição.', 'Invita a alguien a la iglesia o a comer.')),
+  C('invite', 'life', 'home', S('Invite someone to church or to a meal.', 'Invitez quelqu’un à l’église ou à un repas.', 'Convide alguém para a igreja ou para uma refeição.', 'Invita a alguien a la iglesia o a comer.')),
   C('thankGod', 'life', 'sun', S('Before every meal today, stop and thank God.', 'Avant chaque repas aujourd’hui, arrêtez-vous et remerciez Dieu.', 'Antes de cada refeição hoje, pare e agradeça a Deus.', 'Antes de cada comida hoy, detente y da gracias a Dios.')),
 ];
 
@@ -37,7 +38,7 @@ export const KIDS_CHALLENGES = [
   C('k-share', 'life', 'bread', S('Share a toy or a snack with someone.', 'Partage un jouet ou un goûter avec quelqu’un.', 'Reparta um brinquedo ou um lanche com alguém.', 'Comparte un juguete o una merienda con alguien.')),
   C('k-pray', 'life', 'hand', S('Say thank you to God before you eat.', 'Dis merci à Dieu avant de manger.', 'Agradeça a Deus antes de comer.', 'Dale gracias a Dios antes de comer.')),
   C('k-game', 'app', 'star', S('Play a Bible game in the app.', 'Joue à un jeu biblique dans l’appli.', 'Jogue um jogo bíblico no app.', 'Juega un juego bíblico en la app.'), 'kidgame', '#/kids/games'),
-  C('k-help', 'life', 'house', S('Help clean up without being asked.', 'Aide à ranger sans qu’on te le demande.', 'Ajude a arrumar sem ninguém pedir.', 'Ayuda a recoger sin que te lo pidan.')),
+  C('k-help', 'life', 'home', S('Help clean up without being asked.', 'Aide à ranger sans qu’on te le demande.', 'Ajude a arrumar sem ninguém pedir.', 'Ayuda a recoger sin que te lo pidan.')),
   C('k-kind', 'life', 'people', S('Say something kind to three people today.', 'Dis quelque chose de gentil à trois personnes aujourd’hui.', 'Diga algo gentil para três pessoas hoje.', 'Dile algo bonito a tres personas hoy.')),
   C('k-sorry', 'life', 'anchor', S('If you did something wrong, say sorry.', 'Si tu as fait une bêtise, demande pardon.', 'Se você fez algo errado, peça desculpas.', 'Si hiciste algo malo, pide perdón.')),
   C('k-draw', 'app', 'pen', S('Color a Bible picture in the app.', 'Colorie une image de la Bible dans l’appli.', 'Pinte um desenho da Bíblia no app.', 'Colorea un dibujo de la Biblia en la app.'), 'kidcolor', '#/kids/game/color'),
@@ -49,10 +50,21 @@ export const KIDS_CHALLENGES = [
 ];
 
 const getState = () => ({ done: {}, ...load('challenges', {}) });
+CHALLENGES.push(...MORE_CHALLENGES);
+KIDS_CHALLENGES.push(...MORE_KIDS_CHALLENGES);
+// A new challenge each day: the list is shuffled differently every year (same order for everyone),
+// so challenges don't come back in the same order and the next day is always different.
+function yearOrder(n, year) {
+  const idx = Array.from({ length: n }, (_, i) => i);
+  let x = (year * 2654435761) >>> 0;
+  for (let i = n - 1; i > 0; i--) { x = (Math.imul(x ^ (x >>> 15), 2246822519) + 1013904223) >>> 0; const j = x % (i + 1); [idx[i], idx[j]] = [idx[j], idx[i]]; }
+  return idx;
+}
 export function todayChallenge(date = new Date()) {
   const list = isKids() ? KIDS_CHALLENGES : CHALLENGES;
   const d = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 864e5);
-  return list[(d + date.getFullYear()) % list.length];
+  const order = yearOrder(list.length, date.getFullYear());
+  return list[order[d % list.length]];
 }
 export const challengeText = c => L(c.text);
 export function isDone(c = todayChallenge()) {

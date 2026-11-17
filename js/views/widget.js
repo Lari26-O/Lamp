@@ -3,17 +3,17 @@
 import { esc, icon, dayOfYear } from '../util.js';
 import { streak, todayXP, getSettings, getProgress } from '../store.js';
 import { passageText, localRef, currentVersion, bookName } from '../bible.js';
-import { DAILY_VERSES } from '../data/people.js';
+import { VERSES_365 } from '../data/verses365.js';
 import { todayChallenge, challengeText, isDone } from '../challenges.js';
-import { PLANS, planTitle } from '../plans-data.js';
+import { PLANS, planTitle, findPlan, allKnownPlans, dailyPlan } from '../plans-data.js';
 import { planState, planInfo } from './plans.js';
 import { t } from '../i18n.js';
 
 export async function widgetData() {
-  const ref = DAILY_VERSES[dayOfYear() % DAILY_VERSES.length];
+  const ref = VERSES_365[dayOfYear() % VERSES_365.length];
   let verse = ''; try { verse = await passageText(ref, currentVersion()); } catch {}
   const ch = todayChallenge();
-  const ps = planState(); const plan = PLANS.find(p => ps.active[p.id] && !planInfo(p).finished);
+  const ps = planState(); const plan = allKnownPlans(Object.keys(ps.active)).find(p => !planInfo(p).finished && !p.daily);
   const pi = plan && planInfo(plan);
   const last = getProgress().last;
   return {
