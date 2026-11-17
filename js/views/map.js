@@ -37,7 +37,7 @@ export async function render(el, { parts }) {
     <div class="page-head"><div><p class="eyebrow">${t('navg.explore', 'Explore')}</p><h1>${t('map.title', 'Bible maps')}</h1><p>${t('map.intro', 'Explore where the story happened. Tap a place to read its passages, or turn on a journey to trace the route.')}</p></div></div>
     <div class="map-wrap">
       <div><div id="map" role="application" aria-label="${t('map.title', 'Bible maps')}"></div>
-      <p class="muted small">© OpenStreetMap · © CARTO · ${t('map.note', 'Ancient locations are approximate; places marked “approx.” are debated.')}</p></div>
+      <p class="muted small">© Esri · © OpenStreetMap · ${t('map.note', 'Ancient locations are approximate; places marked “approx.” are debated.')}</p></div>
       <div class="card place-list-wrap">
         <form id="whereF" class="where-form" role="search">
           <label for="whereQ"><b>${t('map.where', 'Where is…?')}</b></label>
@@ -75,8 +75,11 @@ export async function render(el, { parts }) {
   if (!document.body.contains(el)) return;
 
   const map = L.map($('#map', el), { scrollWheelZoom: true, worldCopyJump: true }).setView([33.5, 35.5], 6);
-  // CARTO Voyager tiles show place names in English/Latin letters instead of local scripts.
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 18, subdomains: 'abcd', attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>' }).addTo(map);
+  // Esri World Street Map: free, no key, place names in English. If its tiles fail,
+  // fall back to the standard OpenStreetMap tiles so the map always shows.
+  const esri = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', { maxZoom: 18, attribution: 'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap contributors' }).addTo(map);
+  let failed = 0, switched = false;
+  esri.on('tileerror', () => { if (++failed < 4 || switched) return; switched = true; map.removeLayer(esri); L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(map); });
 
   const markers = {};
   for (const p of PLACES) {
